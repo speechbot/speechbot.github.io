@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Generative Spoken Language Modeling</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <script src="jquery-3.5.js"></script>
+    </head>
+    <body>
+<div class="container">
+    <div id="text1">Generative Spoken Language Modeling from Raw Audio</div>
+    <div id="intro">
+        <br>
+            <b>Kushal Lakhotia*</b>, <b>Evgeny Kharitonov*</b>, Wei-Ning Hsu, Yossi Adi, Adam Polyak, Benjamin Bolte, Tu-Anh Nguyen, Jade Copet, <br/> Alexei Baevski, Michael Auli, Alexis Conneau, Adelrahman Mohamed, Emmanuel Dupoux
+        </p>
+        <p>
+            [<a href="https://arxiv.org/abs/2102.01192">Paper</a>]
+        </p>
+    </div>
+</div>
+        <div class="content-container">
+            <img src="fig.png" style="width:30%">
+            <p>
+                We introduce generative spoken language modeling, the task of jointly learning the acoustic and linguistic characteristics of a language from raw audio (without text), and a set of metrics to automatically evaluate the learned representations at acoustic and linguistic levels for both encoding and generation.
+                We set up baseline systems consisting of a discrete speech encoder (returning pseudo-text units), a generative language model (trained on pseudo-text), and a speech decoder (generating a waveform from pseudo-text) and validate the proposed metrics with human evaluation.
+                Across unsupervised speech encoders (CPC, wav2vec 2.0, HuBERT), we find that the number of discrete units (50, 100, or 200) matters in a task-dependent and encoder-dependant way, and that some combinations approach text-based topline systems.
+            </p>
+            <br/>
+            <p>*  Equal contribution.</p>
+        </div>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<div class="content-container">
+    <script src="wavesurfer.js"></script>
+    <div class="content-title">Conditional Examples</div>
+    <table border = "1" class="inlineTable" >
+        <col width="30">
+        <col width="300">
+        <col width="300">
+        <col width="300">
+        <col width="300">
+        <tr>
+            <td></td>
+            <td>Prompts</td>
+            <td>Unsupervised (worst)</td>
+            <td>Unsupervised (best)</td>
+            <td>Supervised</td>
+        </tr>
+        <tr>
+            <td>Encoder</td>
+            <td>---</td>
+            <th>LogMel</th>
+            <th>HuBERT</th>
+            <th>Characters</th>
+        </tr>
+        <tr>
+            <td># of units</td>
+            <td>---</td>
+            <td>100</td>
+            <td>100</td>
+            <td>28</td>
+        </tr>
+        <tr>
+            <th>0</th>
+            <td>
+                <div id="prompts_1_header_waveform"></div>
+                <button id="prompts_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_prompts_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_prompts_1 = WaveSurfer.create({
+                                container: '#prompts_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_prompts_1.load('./audio/prompts/121-127105-0002__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="logmel_1_header_waveform"></div>
+                <button id="logmel_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_logmel_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_logmel_1 = WaveSurfer.create({
+                                container: '#logmel_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_logmel_1.load('./audio/logmel/cond/121-127105-0002__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="hubert_1_header_waveform"></div>
+                <button id="hubert_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_hubert_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_hubert_1 = WaveSurfer.create({
+                                container: '#hubert_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_hubert_1.load('./audio/hubert/cond/121-127105-0002__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="asr_1_header_waveform"></div>
+                <button id="asr_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_asr_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_asr_1 = WaveSurfer.create({
+                                container: '#asr_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_asr_1.load('./audio/asr/cond/121-127105-0002__0.wav');
+                </script>
+           </td>
+        </tr>
+        <tr>
+            <th>1</th>
+            <td>
+                <div id="prompts_2_header_waveform"></div>
+                <button id="prompts_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_prompts_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_prompts_2 = WaveSurfer.create({
+                                container: '#prompts_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_prompts_2.load('./audio/prompts/8463-294825-0001__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="logmel_2_header_waveform"></div>
+                <button id="logmel_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_logmel_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_logmel_2 = WaveSurfer.create({
+                                container: '#logmel_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_logmel_2.load('./audio/logmel/cond/8463-294825-0001__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="hubert_2_header_waveform"></div>
+                <button id="hubert_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_hubert_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_hubert_2 = WaveSurfer.create({
+                                container: '#hubert_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_hubert_2.load('./audio/hubert/cond/8463-294825-0001__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="asr_2_header_waveform"></div>
+                <button id="asr_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_asr_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_asr_2 = WaveSurfer.create({
+                                container: '#asr_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_asr_2.load('./audio/asr/cond/8463-294825-0001__0.wav');
+                </script>
+           </td>
+        </tr>
+    </table>
+</div>
+
+<div class="content-container">
+    <script src="wavesurfer.js"></script>
+    <div class="content-title">Unconditional Examples</div>
+    <table border = "1" class="inlineTable" >
+        <col width="30">
+        <col width="300">
+        <col width="300">
+        <col width="300">
+        <tr>
+            <td></td>
+            <td>Unsupervised (worst)</td>
+            <td>Unsupervised (best)</td>
+            <td>Supervised</td>
+        </tr>
+        <tr>
+            <td>Encoder</td>
+            <th>LogMel</th>
+            <th>HuBERT</th>
+            <th>Characters</th>
+        </tr>
+        <tr>
+            <td># of units</td>
+            <td>100</td>
+            <td>100</td>
+            <td>28</td>
+        </tr>
+        <tr>
+            <th>0</th>
+            <td>
+                <div id="logmel_1_header_waveform_uncond"></div>
+                <button id="logmel_1_header_uncond" class="play-button-demo btn btn-primary" onclick="wavesurfer_logmel_1_uncond.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_logmel_1_uncond = WaveSurfer.create({
+                                container: '#logmel_1_header_waveform_uncond',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_logmel_1_uncond.load('./audio/logmel/uncond/237-126133-0000__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="hubert_1_header_waveform_uncond"></div>
+                <button id="hubert_1_header_uncond" class="play-button-demo btn btn-primary" onclick="wavesurfer_hubert_1_uncond.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_hubert_1_uncond = WaveSurfer.create({
+                                container: '#hubert_1_header_waveform_uncond',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_hubert_1_uncond.load('./audio/hubert/uncond/237-126133-0000__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="asr_1_header_waveform_uncond"></div>
+                <button id="asr_1_header_uncond" class="play-button-demo btn btn-primary" onclick="wavesurfer_asr_1_uncond.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_asr_1_uncond = WaveSurfer.create({
+                                container: '#asr_1_header_waveform_uncond',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_asr_1_uncond.load('./audio/asr/uncond/237-126133-0000__0.wav');
+                </script>
+           </td>
+        </tr>
+        <tr>
+            <th>1</th>
+            <td>
+                <div id="logmel_2_header_waveform_uncond"></div>
+                <button id="logmel_2_header_uncond" class="play-button-demo btn btn-primary" onclick="wavesurfer_logmel_2_uncond.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_logmel_2_uncond = WaveSurfer.create({
+                                container: '#logmel_2_header_waveform_uncond',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_logmel_2_uncond.load('./audio/logmel/uncond/8555-284447-0021__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="hubert_2_header_waveform_uncond"></div>
+                <button id="hubert_2_header_uncond" class="play-button-demo btn btn-primary" onclick="wavesurfer_hubert_2_uncond.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_hubert_2_uncond = WaveSurfer.create({
+                                container: '#hubert_2_header_waveform_uncond',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_hubert_2_uncond.load('./audio/hubert/uncond/8555-284447-0021__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="asr_2_header_waveform_uncond"></div>
+                <button id="asr_2_header_uncond" class="play-button-demo btn btn-primary" onclick="wavesurfer_asr_2_uncond.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_asr_2_uncond = WaveSurfer.create({
+                                container: '#asr_2_header_waveform_uncond',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_asr_2_uncond.load('./audio/asr/uncond/8555-284447-0021__0.wav');
+                </script>
+           </td>
+        </tr>
+    </table>
+</div>
+
+<div class="content-container">
+    <div class="content-title">Samples</div>
+    <div id='descript'>
+    </div>
+    <div id='legend'>
+        <ul style="list-style-type:circle">
+        </ul>    
+    </div>
+    <div class="option-div">
+    <label for="dataset">Choose a dataset:</label>
+    <select id="dataset" onchange=record(this)>
+        <option value=librispeech>LibriSpeech</option>
+        <option value=ljspeech>LJ</option>
+    </select></div>
+    <div class="option-div" id="units-div">
+        <label for="units">Choose number of units:</label>
+        <select id="units" onchange=record(this)>
+            <option value="200">200</option>
+            <option value="100">100</option>
+            <option value="50">50</option>
+        </select>
+    </div>
+    <div class="option-div" id="tasks-div">
+        <label for="tasks">Choose a generation task:</label>
+        <select id="tasks" onchange=record(this)>
+            <option value="cond">Conditional</option>
+            <option value="uncond">Unconditional</option>
+            <option value="resynthesis">Resynthesis</option>
+        </select>
+    </div>
+    <div id="result-div"></div>
+    </div>
+    <div id="loading-status">Loading......</div>   
+    <script>
+        var mode = 0;
+        var audio;
+        var filename = null;
+        function play(file_name) {
+            if (filename !== file_name) {
+                if (audio) {
+                    audio.pause();
+                }
+
+                audio = new Audio(file_name);
+                filename = file_name;
+                audio.play();
+            } else {
+                if (audio.paused ) {
+                    audio = new Audio(file_name);
+                    filename = file_name;
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+            }
+        }
+        function switchMode() {
+            if (document.getElementById("myonoffswitch").checked) {
+                mode = 0;
+            }
+            else {
+                mode = 1;
+            }
+        }
+    </script>
+    <script>
+        /* Highlights the navigation bar button corresponding to page
+        to indicate which page a user is currently viewing.
+        */
+        var tasks="cond";
+        var dataset="librispeech";
+        var units="200";
+
+        var methods = [
+            "cpc",
+            "hubert",
+            "logmel",
+            "w2v",
+        ];
+
+        var method_to_hdr = {
+            "cpc": "CPC",
+            "hubert": "HuBERT",
+            "logmel": "LogMel",
+            "w2v": "Wav2Vec2",
+        };
+
+        var task_to_hdr = {
+            "uncond": "Uncondtional",
+            "cond": "Conditional",
+            "resynthesis": "Resynthesis",
+        };
+        
+        var librispeech_file_list = [
+            "8555-284447-0010__0",
+            "260-123288-0013__0",
+            "908-157963-0026__0",
+            "4507-16021-0017__0",
+            "7729-102255-0022__0",
+            "3575-170457-0038__0",
+            "3575-170457-0045__0",
+            "4446-2275-0029__0",
+            "1188-133604-0027__0",
+            "237-134493-0004__0",
+            "61-70970-0039__0",
+            "8230-279154-0034__0",
+            "8224-274384-0006__0",
+            "5639-40744-0015__0",
+            "260-123286-0006__0",
+            "1320-122612-0012__0",
+            "8455-210777-0060__0",
+            "1089-134686-0008__0",
+            "8463-294828-0001__0",
+            "6930-75918-0005__0",
+            "2961-960-0016__0",
+            "6829-68769-0053__0",
+            "5105-28241-0017__0",
+            "672-122797-0074__0",
+            "8230-279154-0020__0",
+            "260-123286-0026__0",
+            "2300-131720-0036__0",
+            "2094-142345-0043__0",
+            "4446-2275-0040__0",
+            "2830-3980-0005__0",
+            "6829-68771-0019__0",
+            "7127-75947-0001__0",
+            "8555-284447-0008__0",
+            "121-121726-0009__0",
+            "7729-102255-0038__0",
+            "3575-170457-0053__0",
+            "7021-85628-0010__0",
+            "7176-88083-0002__0",
+            "1320-122617-0032__0",
+            "8230-279154-0022__0",
+            "1284-1180-0028__0",
+            "260-123440-0019__0",
+            "8224-274384-0002__0",
+            "2094-142345-0014__0",
+            "4970-29095-0018__0",
+            "3570-5696-0010__0",
+            "8463-294828-0002__0",
+            "4446-2275-0000__0",
+            "5105-28241-0002__0",
+            "1320-122617-0037__0",
+            "1089-134686-0023__0",
+            "4077-13751-0001__0",
+            "1320-122617-0001__0",
+            "3570-5694-0000__0",
+            "7127-75947-0014__0",
+            "4992-41806-0017__0",
+            "2830-3980-0010__0",
+            "6829-68771-0000__0",
+            "7729-102255-0019__0",
+            "2830-3980-0057__0",
+            "6829-68771-0002__0",
+            "1284-1181-0020__0",
+            "7021-79730-0007__0",
+            "7729-102255-0042__0",
+            "1580-141083-0009__0",
+            "8463-294825-0001__0",
+            "908-31957-0014__0",
+            "121-123859-0003__0",
+            "8224-274384-0005__0",
+            "1320-122617-0011__0",
+            "237-134500-0013__0",
+            "1221-135767-0009__0",
+            "4992-41806-0003__0",
+            "8555-284447-0021__0",
+            "4507-16021-0034__0",
+            "6829-68771-0018__0",
+            "5639-40744-0028__0",
+            "4077-13751-0015__0",
+            "8455-210777-0041__0",
+            "5683-32865-0008__0",
+            "5105-28241-0008__0",
+            "672-122797-0067__0",
+            "5639-40744-0012__0",
+            "1284-1180-0001__0",
+            "6829-68769-0005__0",
+            "908-31957-0024__0",
+            "2094-142345-0052__0",
+            "5105-28241-0018__0",
+            "1320-122617-0033__0",
+            "8455-210777-0008__0",
+            "7176-88083-0011__0",
+            "8230-279154-0031__0",
+            "908-157963-0023__0",
+            "237-126133-0000__0",
+            "5142-33396-0042__0",
+            "5105-28240-0009__0",
+            "908-157963-0015__0",
+            "4507-16021-0059__0",
+            "5105-28240-0005__0",
+            "121-127105-0002__0",
+        ]
+
+        var librispeech_resynth_file_list = [
+            "aud_dn_251-137823-0018",
+            "aud_dn_1993-147149-0001",
+            "aud_dn_2035-147961-0034",
+            "aud_dn_777-126732-0078",
+            "aud_dn_2428-83705-0026",
+            "aud_dn_3081-166546-0086",
+            "aud_dn_251-137823-0019",
+            "aud_dn_5536-43358-0019",
+            "aud_dn_84-121550-0021",
+            "aud_dn_8842-302203-0010",
+            "aud_dn_6319-64726-0008",
+            "aud_dn_1993-147149-0007",
+            "aud_dn_6295-244435-0005",
+            "aud_dn_1272-135031-0004",
+            "aud_dn_5694-64029-0016",
+            "aud_dn_5895-34615-0009",
+            "aud_dn_1272-135031-0012",
+            "aud_dn_3081-166546-0069",
+            "aud_dn_6313-66125-0011",
+            "aud_dn_2277-149897-0030",
+            "aud_dn_7976-105575-0019",
+            "aud_dn_1462-170142-0041",
+            "aud_dn_6345-93302-0026",
+            "aud_dn_2902-9008-0006",
+            "aud_dn_5895-34622-0015",
+            "aud_dn_777-126732-0019",
+            "aud_dn_5694-64025-0017",
+            "aud_dn_5694-64038-0006",
+            "aud_dn_5694-64038-0007",
+            "aud_dn_5694-64025-0002",
+            "aud_dn_3853-163249-0037",
+            "aud_dn_3000-15664-0017",
+            "aud_dn_7976-110523-0015",
+            "aud_dn_5895-34622-0006",
+            "aud_dn_422-122949-0012",
+            "aud_dn_2277-149874-0008",
+            "aud_dn_5338-284437-0029",
+            "aud_dn_3752-4944-0069",
+            "aud_dn_6319-275224-0008",
+            "aud_dn_1919-142785-0056",
+            "aud_dn_174-50561-0004",
+            "aud_dn_8297-275154-0018",
+            "aud_dn_5895-34622-0009",
+            "aud_dn_2803-154328-0013",
+            "aud_dn_5694-64025-0009",
+            "aud_dn_5338-284437-0032",
+            "aud_dn_3752-4943-0003",
+            "aud_dn_6313-66129-0019",
+            "aud_dn_8297-275154-0003",
+            "aud_dn_8842-302196-0004",
+            "aud_dn_2277-149874-0005",
+            "aud_dn_7976-110523-0020",
+            "aud_dn_3536-8226-0031",
+            "aud_dn_6313-66129-0022",
+            "aud_dn_422-122949-0033",
+            "aud_dn_5338-24640-0009",
+            "aud_dn_2803-161169-0002",
+            "aud_dn_5895-34629-0025",
+            "aud_dn_7976-110124-0015",
+            "aud_dn_5694-64038-0021",
+            "aud_dn_3853-163249-0004",
+            "aud_dn_777-126732-0003",
+            "aud_dn_6241-61946-0010",
+            "aud_dn_5694-64029-0024",
+            "aud_dn_3576-138058-0022",
+            "aud_dn_777-126732-0058",
+            "aud_dn_1993-147965-0003",
+            "aud_dn_2277-149897-0000",
+            "aud_dn_2277-149896-0001",
+            "aud_dn_1462-170138-0016",
+            "aud_dn_3752-4944-0011",
+            "aud_dn_5694-64029-0019",
+            "aud_dn_1462-170145-0002",
+            "aud_dn_1919-142785-0010",
+            "aud_dn_2086-149220-0007",
+            "aud_dn_1272-141231-0000",
+            "aud_dn_2277-149896-0017",
+            "aud_dn_1272-141231-0029",
+            "aud_dn_3081-166546-0067",
+            "aud_dn_2428-83705-0010",
+            "aud_dn_2412-153954-0010",
+            "aud_dn_2412-153954-0000",
+            "aud_dn_5895-34615-0015",
+            "aud_dn_3081-166546-0063",
+            "aud_dn_5536-43359-0001",
+            "aud_dn_1993-147149-0026",
+            "aud_dn_2035-147961-0006",
+            "aud_dn_84-121550-0010",
+            "aud_dn_2428-83705-0001",
+            "aud_dn_777-126732-0063",
+            "aud_dn_652-130726-0025",
+            "aud_dn_1919-142785-0016",
+            "aud_dn_2412-153954-0017",
+            "aud_dn_2412-153954-0003",
+            "aud_dn_1673-143396-0015",
+            "aud_dn_6295-244435-0026",
+            "aud_dn_5895-34615-0017",
+        ]
+
+        var lj_file_list = [
+            "aud_dn_LJ002-0110",
+            "aud_dn_LJ010-0011",
+            "aud_dn_LJ016-0309",
+            "aud_dn_LJ028-0048",
+            "aud_dn_LJ037-0244",
+            "aud_dn_LJ002-0252",
+            "aud_dn_LJ010-0059",
+            "aud_dn_LJ016-0444",
+            "aud_dn_LJ028-0160",
+            "aud_dn_LJ038-0050",
+            "aud_dn_LJ002-0305",
+            "aud_dn_LJ010-0079",
+            "aud_dn_LJ017-0018",
+            "aud_dn_LJ028-0272",
+            "aud_dn_LJ038-0212",
+            "aud_dn_LJ003-0095",
+            "aud_dn_LJ010-0113",
+            "aud_dn_LJ017-0061",
+            "aud_dn_LJ029-0186",
+            "aud_dn_LJ039-0009",
+            "aud_dn_LJ003-0167",
+            "aud_dn_LJ010-0151",
+            "aud_dn_LJ017-0196",
+            "aud_dn_LJ029-0206",
+            "aud_dn_LJ039-0170",
+            "aud_dn_LJ003-0298",
+            "aud_dn_LJ010-0157",
+            "aud_dn_LJ017-0226",
+            "aud_dn_LJ030-0048",
+            "aud_dn_LJ040-0159",
+            "aud_dn_LJ004-0057",
+            "aud_dn_LJ010-0191",
+            "aud_dn_LJ018-0102",
+            "aud_dn_LJ030-0151",
+            "aud_dn_LJ041-0179",
+            "aud_dn_LJ004-0198",
+            "aud_dn_LJ011-0128",
+            "aud_dn_LJ019-0111",
+            "aud_dn_LJ030-0229",
+            "aud_dn_LJ042-0083",
+            "aud_dn_LJ004-0212",
+            "aud_dn_LJ011-0170",
+            "aud_dn_LJ019-0144",
+            "aud_dn_LJ030-0238",
+            "aud_dn_LJ042-0231",
+            "aud_dn_LJ005-0070",
+            "aud_dn_LJ011-0272",
+            "aud_dn_LJ019-0269",
+            "aud_dn_LJ031-0036",
+            "aud_dn_LJ043-0158",
+            "aud_dn_LJ005-0170",
+            "aud_dn_LJ013-0026",
+            "aud_dn_LJ021-0174",
+            "aud_dn_LJ031-0160",
+            "aud_dn_LJ044-0002",
+            "aud_dn_LJ005-0219",
+            "aud_dn_LJ013-0191",
+            "aud_dn_LJ021-0175",
+            "aud_dn_LJ032-0157",
+            "aud_dn_LJ046-0024",
+            "aud_dn_LJ006-0123",
+            "aud_dn_LJ014-0110",
+            "aud_dn_LJ022-0094",
+            "aud_dn_LJ032-0214",
+            "aud_dn_LJ046-0088",
+            "aud_dn_LJ006-0171",
+            "aud_dn_LJ014-0157",
+            "aud_dn_LJ024-0044",
+            "aud_dn_LJ033-0067",
+            "aud_dn_LJ048-0178",
+            "aud_dn_LJ006-0264",
+            "aud_dn_LJ014-0204",
+            "aud_dn_LJ024-0066",
+            "aud_dn_LJ033-0170",
+            "aud_dn_LJ048-0284",
+            "aud_dn_LJ006-0274",
+            "aud_dn_LJ015-0065",
+            "aud_dn_LJ026-0022",
+            "aud_dn_LJ033-0198",
+            "aud_dn_LJ049-0075",
+            "aud_dn_LJ007-0025",
+            "aud_dn_LJ015-0219",
+            "aud_dn_LJ026-0161",
+            "aud_dn_LJ034-0171",
+            "aud_dn_LJ049-0111",
+            "aud_dn_LJ007-0222",
+            "aud_dn_LJ016-0150",
+            "aud_dn_LJ027-0013",
+            "aud_dn_LJ034-0200",
+            "aud_dn_LJ049-0166",
+            "aud_dn_LJ008-0201",
+            "aud_dn_LJ016-0189",
+            "aud_dn_LJ027-0025",
+            "aud_dn_LJ035-0099",
+            "aud_dn_LJ050-0120",
+            "aud_dn_LJ009-0057",
+            "aud_dn_LJ016-0306",
+            "aud_dn_LJ027-0067",
+            "aud_dn_LJ037-0154",
+            "aud_dn_LJ050-0175",
+        ];
+
+        var file_lists = {
+            "librispeech_cond": librispeech_file_list,
+            "librispeech_uncond": librispeech_file_list,
+            "librispeech_resynthesis": librispeech_resynth_file_list,
+            "ljspeech_resynthesis": lj_file_list,
+        };
+
+        function lock(){
+            $('#dataset').attr('disabled', 'disabled');
+            $('#tasks').attr('disabled', 'disabled');
+            $('#units').attr('disabled', 'disabled');
+            $('#loading-status').show();
+        }
+        function unlock(){
+            $('#dataset').removeAttr('disabled');
+            $('#tasks').removeAttr('disabled');
+            $('#units').removeAttr('disabled');
+            $('#loading-status').hide();
+        }
+
+        function preload(dataset, tasks, units, push){
+            lock();
+            $('#tasks').val(tasks);
+            $("#result-div").empty();
+            $("#result-div").append(createTable());
+            unlock();
+        }
+
+        preload(dataset, tasks, units, true);
+
+        function createTable() {
+            var tableElem, rowElem, colElem;
+
+            tableElem = document.createElement('table');
+            headline = document.createElement('tr');
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('ID'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Task'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Units'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            if (tasks === 'cond') {
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode('Prompts'));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                headline.appendChild(colElem);
+            } else if (tasks === 'resynthesis') {
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode('Original'));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                headline.appendChild(colElem);
+            }
+
+            for (var ii = 0; ii < methods.length; ii++) {
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(method_to_hdr[methods[ii]]));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                headline.appendChild(colElem);
+            }
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Characters'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            if (tasks === 'resynthesis') {
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode('Orig Text Resynth'));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                headline.appendChild(colElem);
+            }
+
+            tableElem.appendChild(headline);
+
+            units = $("#units").val();
+
+            var bg_color='white';
+            var txt_color='rgb(22, 38, 67)';
+
+            var file_list = file_lists[dataset + "_" + tasks];
+            var N = file_list.length;
+            for (var j = 0; j < N; j++) {
+                rowElem = document.createElement('tr');
+                rowElem.style.backgroundColor = bg_color;
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(j.toString()));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(task_to_hdr[tasks]));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(units));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                if (tasks === 'cond') {
+                    colElem = document.createElement('td');
+                    var x = document.createElement("input");
+                    x.setAttribute("type", "button");
+                    x.setAttribute("value", "PLAY");
+                    x.setAttribute("onclick", "play('https://dl.fbaipublicfiles.com/speechbot/demo_samples/" + dataset + "/prompts/" + file_list[j] + ".wav')");
+                    colElem.appendChild(x);
+                    colElem.style.color = txt_color;
+                    colElem.style.center = true;
+                    rowElem.appendChild(colElem);
+                } else if (tasks === 'resynthesis') {
+                    colElem = document.createElement('td');
+                    var x = document.createElement("input");
+                    x.setAttribute("type", "button");
+                    x.setAttribute("value", "PLAY");
+                    x.setAttribute("onclick", "play('https://dl.fbaipublicfiles.com/speechbot/demo_samples/" + dataset + "/original/" + file_list[j].replace("aud_dn_","") + ".wav')");
+                    colElem.appendChild(x);
+                    colElem.style.color = txt_color;
+                    colElem.style.center = true;
+                    rowElem.appendChild(colElem);
+                }
+
+                for (var ii = 0; ii < methods.length; ii++) {
+                    colElem = document.createElement('td');
+                    var x = document.createElement("input");
+                    x.setAttribute("type", "button");
+                    x.setAttribute("value", "PLAY");
+                    x.setAttribute("onclick", "play('https://dl.fbaipublicfiles.com/speechbot/demo_samples/" + dataset + "/" + units + "/" + methods[ii] + "/" + tasks + "/" + file_list[j] + ".wav')");
+                    colElem.appendChild(x);
+                    colElem.style.color = txt_color;
+                    colElem.style.center = true;
+                    rowElem.appendChild(colElem);
+                }
+
+                colElem = document.createElement('td');
+                var x = document.createElement("input");
+                x.setAttribute("type", "button");
+                x.setAttribute("value", "PLAY");
+                x.setAttribute("onclick", "play('https://dl.fbaipublicfiles.com/speechbot/demo_samples/" + dataset + "/asr/" +  tasks + "/" + file_list[j] + ".wav')");
+                colElem.appendChild(x);
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                if (tasks === 'resynthesis') {
+                    colElem = document.createElement('td');
+                    var x = document.createElement("input");
+                    x.setAttribute("type", "button");
+                    x.setAttribute("value", "PLAY");
+                    x.setAttribute("onclick", "play('https://dl.fbaipublicfiles.com/speechbot/demo_samples/" + dataset + "/orig_resynthesized/" + file_list[j] + ".wav')");
+                    colElem.appendChild(x);
+                    colElem.style.color = txt_color;
+                    colElem.style.center = true;
+                    rowElem.appendChild(colElem);
+                }
+
+                tableElem.appendChild(rowElem);
+
+                if ((j+1) % 10 === 0) {
+                    flip = bg_color
+                    bg_color = txt_color;
+                    txt_color = flip;
+                }
+            }
+
+            return tableElem;
+        }
+
+        function fetch_result(){
+            $(window).ready(function() {
+                dataset=$("#dataset").val();
+                tasks=$("#tasks").val();
+                units=$("#units").val();
+                $("#result-div").empty();
+                if (dataset === 'ljspeech') {
+                    tasks='resynthesis';
+                    $("#tasks").empty();
+                    $("#tasks").append('<option value="resynthesis">Resynthesis</option>');
+                } else {
+                    $("#tasks").empty();
+                    $("#tasks").append('<option value="cond">Conditional</option>');
+                    $("#tasks").append('<option value="uncond">Unconditional</option>');
+                    $("#tasks").append('<option value="resynthesis">Resynthesis</option>');
+                    $("#tasks").val(tasks);
+                }
+
+                $("#result-div").append(createTable());
+                unlock();
+            });
+        }
+
+        function record(sel) {
+            lock();
+            fetch_result();
+        }
+
+        window.addEventListener('popstate', function(e) {
+            preload(e.state["dataset"], e.state["tasks"], e.state["units"], false);
+        });
+    </script>
+<div class="content-container">
+    Sample paged based on <a style="color:rgb(22, 38, 67)"  href="https://daps.cs.princeton.edu/projects/HiFi-GAN/index.php"> HiFi-GAN</a> page.  
+</div>
+</body>
+</html>

@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Speech Resynthesis from Discrete Disentangled Self-Supervised Representations</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <script src="jquery-3.5.js"></script>
+    </head>
+    <body>
+<div class="container">
+    <div id="text1">Speech Resynthesis from Discrete <br/> Disentangled Self-Supervised Representations</div>
+    <div id="intro">
+        <br>
+        <p>
+            Adam Polyak, Yossi Adi, Jade Copet, Eugene Kharitonov, Kushal Lakhotia, Wei-Ning Hsu, Abdelrahman Mohamed, Emmanuel Dupoux
+        </p>
+    </div>
+</div>
+<div class="content-container">
+    <img src="fig.png" style="width:70%">
+    <p>
+        We propose using self-supervised discrete representations for the task of speech resynthesis.
+        To generate disentangled representation, we separately extract low-bitrate representations for speech content, prosodic information, and speaker identity.
+        This allows to synthesize speech in a controllable manner.
+        We analyze various state-of-the-art, self-supervised representation learning methods and shed light on the advantages of each method while considering reconstruction quality and disentanglement properties.
+        Specifically, we evaluate the F0 reconstruction, speaker identification performance (for both resynthesis and voice conversion), recordings' intelligibility, and overall quality using subjective human evaluation.
+        Lastly, we demonstrate how these representations can be used for an ultra-lightweight speech codec.
+        Using the obtained representations, we can get to a rate of 365 bits per second while providing better speech quality than the baseline methods.
+    </p>
+    <br/>
+</div>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<div class="content-container">
+    <script src="wavesurfer.js"></script>
+    <div class="content-title">Example</div>
+
+    <table border="0" class="inlineTable">
+        <tr>
+            <th style="width:30px">Original</th>
+            <td style="width:30px"></td>
+            <td>
+                <div id="original_header_waveform"></div>
+                <button id="original_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_original.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_original = WaveSurfer.create({
+                                container: '#original_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_original.load('./audio/teaser/p269_182.mp3');
+                </script>
+           </td>
+           <td></td>
+           <td></td>
+           <td></td>
+           <td></td>
+        </tr>
+        <tr>
+           <td></td>
+           <td></td>
+           <td></td>
+           <td></td>
+        </tr>
+        <tr>
+            <th>Method</th>
+            <th># of Units</th>
+            <th>Resynthesis</th>
+            <th>Conversion to p258</th>
+            <th>Conversion to p343</th>
+            <th>Conversion to p292</th>
+        </tr>
+        <tr>
+            <th>HuBERT</th>
+            <td>100</td>
+            <td>
+                <div id="resynthesis_hubert__header_waveform"></div>
+                <button id="resynthesis_hubert__header" class="play-button-demo btn btn-primary" onclick="wavesurfer_resynthesis_hubert_.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_resynthesis_hubert_ = WaveSurfer.create({
+                                container: '#resynthesis_hubert__header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_resynthesis_hubert_.load('./audio/teaser/hubert/p269_182.mp3');
+                </script>
+           </td>
+            <td>
+                <div id="vc_hubert_1_header_waveform"></div>
+                <button id="vc_hubert_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_vc_hubert_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_vc_hubert_1 = WaveSurfer.create({
+                                container: '#vc_hubert_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_vc_hubert_1.load('./audio/teaser/hubert/p269_182_31.mp3');
+                </script>
+           </td>
+            <td>
+                <div id="vc_hubert_2_header_waveform"></div>
+                <button id="vc_hubert_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_vc_hubert_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_vc_hubert_2 = WaveSurfer.create({
+                                container: '#vc_hubert_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_vc_hubert_2.load('./audio/teaser/hubert/p269_182_98.mp3');
+                </script>
+           </td>
+            <td>
+                <div id="vc_hubert_3_header_waveform"></div>
+                <button id="vc_hubert_3_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_vc_hubert_3.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_vc_hubert_3 = WaveSurfer.create({
+                                container: '#vc_hubert_3_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_vc_hubert_3.load('./audio/teaser/hubert/p269_182_62.mp3');
+                </script>
+           </td>
+        </tr>
+        <tr>
+            <th>CPC</th>
+            <td>100</td>
+            <td>
+                <div id="resynthesis_cpc_header_waveform"></div>
+                <button id="resynthesis_cpc_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_resynthesis_cpc.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_resynthesis_cpc = WaveSurfer.create({
+                                container: '#resynthesis_cpc_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_resynthesis_cpc.load('./audio/teaser/cpc/p269_182.mp3');
+                </script>
+           </td>
+            <td>
+                <div id="vc_cpc_1_header_waveform"></div>
+                <button id="vc_cpc_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_vc_cpc_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_vc_cpc_1 = WaveSurfer.create({
+                                container: '#vc_cpc_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_vc_cpc_1.load('./audio/teaser/cpc/p269_182_31.mp3');
+                </script>
+           </td>
+            <td>
+                <div id="vc_cpc_2_header_waveform"></div>
+                <button id="vc_cpc_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_vc_cpc_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_vc_cpc_2 = WaveSurfer.create({
+                                container: '#vc_cpc_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_vc_cpc_2.load('./audio/teaser/cpc/p269_182_98.mp3');
+                </script>
+           </td>
+            <td>
+                <div id="vc_cpc_3_header_waveform"></div>
+                <button id="vc_cpc_3_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_vc_cpc_3.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_vc_cpc_3 = WaveSurfer.create({
+                                container: '#vc_cpc_3_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_vc_cpc_3.load('./audio/teaser/cpc/p269_182_62.mp3');
+                </script>
+           </td>
+        </tr>
+        <tr>
+            <th>VQ-VAE</th>
+            <td>256</td>
+            <td>
+                <div id="resynthesis_vqvae__header_waveform"></div>
+                <button id="resynthesis_vqvae__header" class="play-button-demo btn btn-primary" onclick="wavesurfer_resynthesis_vqvae_.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_resynthesis_vqvae_ = WaveSurfer.create({
+                                container: '#resynthesis_vqvae__header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_resynthesis_vqvae_.load('./audio/teaser/vqvae/p269_182.mp3');
+                </script>
+           </td>
+            <td>
+                <div id="vc_vqvae_1_header_waveform"></div>
+                <button id="vc_vqvae_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_vc_vqvae_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_vc_vqvae_1 = WaveSurfer.create({
+                                container: '#vc_vqvae_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_vc_vqvae_1.load('./audio/teaser/vqvae/p269_182_31.mp3');
+                </script>
+           </td>
+            <td>
+                <div id="vc_vqvae_2_header_waveform"></div>
+                <button id="vc_vqvae_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_vc_vqvae_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_vc_vqvae_2 = WaveSurfer.create({
+                                container: '#vc_vqvae_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_vc_vqvae_2.load('./audio/teaser/vqvae/p269_182_98.mp3');
+                </script>
+           </td>
+           <td>
+                <div id="vc_vqvae_3_header_waveform"></div>
+                <button id="vc_vqvae_3_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_vc_vqvae_3.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_vc_vqvae_3 = WaveSurfer.create({
+                                container: '#vc_vqvae_3_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_vc_vqvae_3.load('./audio/teaser/vqvae/p269_182_62.mp3');
+                </script>
+           </td>
+        </tr>
+    </table>
+</div>
+
+<div class="content-container">
+    <div class="content-title">Samples</div>
+    <div id='descript'>
+    </div>
+    <div id='legend'>
+        <ul style="list-style-type:circle">
+        </ul>    
+    </div>
+    <div class="option-div">
+    <label for="dataset">Choose a dataset:</label>
+    <select id="dataset" onchange=record(this)>
+        <option value=vctk>VCTK</option>
+        <option value=ljspeech>LJ</option>
+    </select></div>
+    <div class="option-div" id="tasks-div">
+        <label for="tasks">Choose task:</label>
+        <select id="tasks" onchange=record(this)>
+            <option value="resynthesis">Resynthesis</option>
+            <option value="voice_conversion">Voice Conversion</option>
+            <option value="codec">Codec (Unseen Speakers)</option>
+        </select>
+    </div>
+    <div id="result-div"></div>
+    </div>
+
+<div id="loading-status">Loading......</div>
+
+<script>
+        var mode = 0;
+        var audio;
+        var filename = null;
+        function play(file_name) {
+            if (filename !== file_name) {
+                if (audio) {
+                    audio.pause();
+                }
+
+                audio = new Audio(file_name);
+                filename = file_name;
+                audio.play();
+            } else {
+                if (audio.paused ) {
+                    audio = new Audio(file_name);
+                    filename = file_name;
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+            }
+        }
+        function switchMode() {
+            if (document.getElementById("myonoffswitch").checked) {
+                mode = 0;
+            }
+            else {
+                mode = 1;
+            }
+        }
+    </script>
+
+<script>
+        /* Highlights the navigation bar button corresponding to page
+        to indicate which page a user is currently viewing.
+        */
+        var tasks="resynthesis";
+        var dataset="vctk";
+
+        var methods = [
+            "cpc",
+            "vqvae",
+            "hubert",
+        ];
+
+        var method_to_hdr = {
+            "cpc": "CPC* \n 100 Units",
+            "hubert": "HuBERT* \n 100 Units",
+            "vqvae": "VQ-VAE* \n 256 Units",
+            "gt": "Ground Truth",
+        };
+
+        var task_to_hdr = {
+            "codec": "Codec",
+            "voice_conversion": "Voice Conversion",
+            "resynthesis": "Resynthesis",
+        };
+        
+        var vctk_recon_file_list = [
+             'p240_215',
+             'p279_314',
+             'p252_005',
+             'p304_109',
+             'p280_310',
+             'p293_181',
+             'p266_124',
+             'p323_035',
+             'p361_355',
+             'p279_216',
+             'p257_247',
+             'p311_383',
+             'p248_154',
+             'p300_032',
+             'p302_129',
+             'p340_413',
+             'p226_180',
+             'p345_043',
+             'p361_116',
+             'p316_400'
+        ];
+
+        var vctk_vc_file_list = [
+             'p268_140_96',
+             'p280_062_44',
+             'p329_194_55',
+             'p244_301_37',
+             'p301_175_82',
+             'p287_269_81',
+             'p229_229_41',
+             'p248_154_1',
+             'p230_143_41',
+             'p299_275_66',
+             'p229_195_19',
+             'p245_207_39',
+             'p251_018_40',
+             'p316_387_41',
+             'p252_320_83',
+             'p303_084_8',
+             'p243_118_32',
+             'p238_293_29',
+             'p276_056_34',
+             'p233_015_50',
+        ];
+
+        var lj_recon_file_list = [
+             'LJ047-0164',
+             'LJ004-0163',
+             'LJ007-0112',
+             'LJ018-0079',
+             'LJ007-0196',
+             'LJ048-0277',
+             'LJ010-0050',
+             'LJ025-0119',
+             'LJ008-0265',
+             'LJ018-0351',
+             'LJ018-0305',
+             'LJ007-0130',
+             'LJ022-0021',
+             'LJ035-0057',
+             'LJ029-0005',
+             'LJ010-0200',
+             'LJ016-0190',
+             'LJ037-0200',
+             'LJ007-0201',
+             'LJ016-0395',
+        ];
+
+        var lj_vc_file_list = [
+             'p305_373_0',
+             'p330_021_0',
+             'p297_218_0',
+             'p362_134_0',
+             'p361_055_0',
+             'p294_423_0',
+             'p329_222_0',
+             'p305_367_0',
+             'p333_394_0',
+             'p339_338_0',
+             'p310_313_0',
+             'p345_109_0',
+             'p300_193_0',
+             'p301_175_0',
+             'p299_364_0',
+             'p318_302_0',
+             'p360_050_0',
+             'p334_041_0',
+             'p341_171_0',
+             'p311_098_0',
+        ];
+
+        var id_to_spkr = [
+             'p225',
+             'p226',
+             'p227',
+             'p228',
+             'p229',
+             'p230',
+             'p231',
+             'p232',
+             'p233',
+             'p234',
+             'p236',
+             'p237',
+             'p238',
+             'p239',
+             'p240',
+             'p241',
+             'p243',
+             'p244',
+             'p245',
+             'p246',
+             'p247',
+             'p248',
+             'p249',
+             'p250',
+             'p251',
+             'p252',
+             'p253',
+             'p254',
+             'p255',
+             'p256',
+             'p257',
+             'p258',
+             'p259',
+             'p260',
+             'p261',
+             'p262',
+             'p263',
+             'p264',
+             'p265',
+             'p266',
+             'p267',
+             'p268',
+             'p269',
+             'p270',
+             'p271',
+             'p272',
+             'p273',
+             'p274',
+             'p275',
+             'p276',
+             'p277',
+             'p278',
+             'p279',
+             'p280',
+             'p281',
+             'p282',
+             'p283',
+             'p284',
+             'p285',
+             'p286',
+             'p287',
+             'p288',
+             'p292',
+             'p293',
+             'p294',
+             'p295',
+             'p297',
+             'p298',
+             'p299',
+             'p300',
+             'p301',
+             'p302',
+             'p303',
+             'p304',
+             'p305',
+             'p306',
+             'p307',
+             'p308',
+             'p310',
+             'p311',
+             'p312',
+             'p313',
+             'p314',
+             'p315',
+             'p316',
+             'p317',
+             'p318',
+             'p323',
+             'p326',
+             'p329',
+             'p330',
+             'p333',
+             'p334',
+             'p335',
+             'p336',
+             'p339',
+             'p340',
+             'p341',
+             'p343',
+             'p345',
+             'p347',
+             'p351',
+             'p360',
+             'p361',
+             'p362',
+             'p363',
+             'p364',
+             'p374',
+             'p376'
+        ];
+
+        var codec_file_list = [
+             'p314_136',
+             'p316_228',
+             'p287_068',
+             'p316_226',
+             'p316_097',
+             'p237_215',
+             'p316_172',
+             'p244_328',
+             'p316_349',
+             'p244_162',
+             'p316_009',
+             'p244_240',
+             'p316_415',
+             'p237_040',
+             'p244_069',
+             'p316_043',
+             'p244_351',
+             'p244_336',
+             'p316_034',
+             'p244_219'
+        ];
+
+        var file_lists = {
+            "vctk_resynthesis": vctk_recon_file_list,
+            "vctk_voice_conversion": vctk_vc_file_list,
+            "vctk_codec": codec_file_list,
+            "ljspeech_resynthesis": lj_recon_file_list,
+            "ljspeech_voice_conversion": lj_vc_file_list,
+        };
+
+        // var root = 'https://dl.fbaipublicfiles.com/speechbot/demo_samples';
+        var root = './audio';
+
+        function lock(){
+            $('#dataset').attr('disabled', 'disabled');
+            $('#tasks').attr('disabled', 'disabled');
+            $('#loading-status').show();
+        }
+        function unlock(){
+            $('#dataset').removeAttr('disabled');
+            $('#tasks').removeAttr('disabled');
+            $('#loading-status').hide();
+        }
+
+        function preload(dataset, tasks, push){
+            lock();
+            $('#tasks').val(tasks);
+            $("#result-div").empty();
+            $("#result-div").append(createTable());
+            if (tasks === 'voice_conversion' || tasks === 'resynthesis') {
+                let footer = document.createElement('p');
+                footer.append('* Additional 20 units used for pitch stream.');
+                $("#result-div").append(footer);
+            }
+            unlock();
+        }
+
+        preload(dataset, tasks, true);
+
+        function createTable() {
+            var tableElem;
+            tableElem = document.createElement('table');
+
+            if (tasks === 'voice_conversion') {
+                return voice_conversion(tableElem);
+            } else if (tasks === 'resynthesis') {
+                return resynthesis(tableElem);
+            } else if (tasks === 'codec') {
+                return codec(tableElem);
+            }
+        }
+
+        function voice_conversion(tableElem) {
+            var headline, rowElem, colElem;
+
+            headline = document.createElement('tr');
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('ID'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Task'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Source Speaker'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Target Speaker'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Input'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            for (let ii = 0; ii < methods.length; ii++) {
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(method_to_hdr[methods[ii]]));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                colElem.style.whiteSpace = 'pre';
+                headline.appendChild(colElem);
+            }
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Target Reference'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            tableElem.appendChild(headline);
+
+            var bg_color='white';
+            var txt_color='rgb(22, 38, 67)';
+
+            var file_list = file_lists[dataset + "_" + tasks];
+            var N = file_list.length;
+            for (var j = 0; j < N; j++) {
+                rowElem = document.createElement('tr');
+                rowElem.style.backgroundColor = bg_color;
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(j.toString()));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(task_to_hdr[tasks]));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                var parts = file_list[j].split('_');
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(parts[0]));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                colElem = document.createElement('td');
+                var trgt_spkr = null;
+                if (dataset === "vctk") {
+                    trgt_spkr = id_to_spkr[parseInt(parts[2])];
+                } else {
+                    trgt_spkr = "LJ";
+                }
+                colElem.appendChild(document.createTextNode(trgt_spkr));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                colElem = document.createElement('td');
+                var x = document.createElement("input");
+                x.setAttribute("type", "button");
+                x.setAttribute("value", "PLAY");
+                x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + "gt" + "/" + file_list[j] + ".mp3')");
+                colElem.appendChild(x);
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                for (var ii = 0; ii < methods.length; ii++) {
+                    colElem = document.createElement('td');
+                    var x = document.createElement("input");
+                    x.setAttribute("type", "button");
+                    x.setAttribute("value", "PLAY");
+                    x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + file_list[j] + ".mp3')");
+                    colElem.appendChild(x);
+                    colElem.style.color = txt_color;
+                    colElem.style.center = true;
+                    rowElem.appendChild(colElem);
+                }
+
+                colElem = document.createElement('td');
+                var x = document.createElement("input");
+                x.setAttribute("type", "button");
+                x.setAttribute("value", "PLAY");
+                x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + "ref" + "/" + file_list[j] + ".mp3')");
+                colElem.appendChild(x);
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                tableElem.appendChild(rowElem);
+
+                if ((j+1) % 10 === 0) {
+                    flip = bg_color
+                    bg_color = txt_color;
+                    txt_color = flip;
+                }
+            }
+
+            return tableElem;
+        }
+
+        function resynthesis(tableElem) {
+             var headline, colElem, rowElem;
+
+            headline = document.createElement('tr');
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('ID'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Task'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            for (var ii = 0; ii < methods.length; ii++) {
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(method_to_hdr[methods[ii]]));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                colElem.style.whiteSpace = 'pre';
+                headline.appendChild(colElem);
+            }
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Ground Truth'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            tableElem.appendChild(headline);
+
+            var bg_color='white';
+            var txt_color='rgb(22, 38, 67)';
+
+            var file_list = file_lists[dataset + "_" + tasks];
+            var N = file_list.length;
+            for (var j = 0; j < N; j++) {
+                rowElem = document.createElement('tr');
+                rowElem.style.backgroundColor = bg_color;
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(j.toString()));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(task_to_hdr[tasks]));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                for (var ii = 0; ii < methods.length; ii++) {
+                    colElem = document.createElement('td');
+                    var x = document.createElement("input");
+                    x.setAttribute("type", "button");
+                    x.setAttribute("value", "PLAY");
+                    x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + file_list[j] + ".mp3')");
+                    colElem.appendChild(x);
+                    colElem.style.color = txt_color;
+                    colElem.style.center = true;
+                    rowElem.appendChild(colElem);
+                }
+
+                    colElem = document.createElement('td');
+                    var x = document.createElement("input");
+                    x.setAttribute("type", "button");
+                    x.setAttribute("value", "PLAY");
+                    x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + "gt" + "/" + file_list[j] + ".mp3')");
+                    colElem.appendChild(x);
+                    colElem.style.color = txt_color;
+                    colElem.style.center = true;
+                    rowElem.appendChild(colElem);
+
+                tableElem.appendChild(rowElem);
+
+                if ((j+1) % 10 === 0) {
+                    flip = bg_color
+                    bg_color = txt_color;
+                    txt_color = flip;
+                }
+            }
+
+            return tableElem;
+        }
+
+        function codec(tableElem) {
+             var headline, colElem, rowElem;
+
+            headline = document.createElement('tr');
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('ID'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Task'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            const codec_methods = ['speex_4000', 'codec2', 'lpcnet', 'opus', 'vqvae', 'hubert50', 'hubert100', 'hubert200', 'gt'];
+            const codec_method_to_hdr = {
+                'speex_4000': 'Speex \n 4000bps',
+                'codec2': 'Codec2 \n 2400bps',
+                'opus': 'Opus \n 9000bps',
+                'lpcnet': 'LPCNet \n 1600bps',
+                'vqvae': 'VQ-VAE \n 800bps',
+                'hubert50': 'HuBERT 50 \n 365bps',
+                'hubert100': 'HuBERT 100 \n 415bps',
+                'hubert200': 'HuBERT 200 \n 465bps',
+                'gt': 'Ground Truth \n 256000bps',
+            };
+            for (let ii = 0; ii < codec_methods.length; ii++) {
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(codec_method_to_hdr[codec_methods[ii]]));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                colElem.style.whiteSpace = 'pre';
+                headline.appendChild(colElem);
+            }
+
+            tableElem.appendChild(headline);
+
+            var bg_color='white';
+            var txt_color='rgb(22, 38, 67)';
+
+            var file_list = file_lists[dataset + "_" + tasks];
+            var N = file_list.length;
+            for (var j = 0; j < N; j++) {
+                rowElem = document.createElement('tr');
+                rowElem.style.backgroundColor = bg_color;
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(j.toString()));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(task_to_hdr[tasks]));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                for (var ii = 0; ii < codec_methods.length; ii++) {
+                    colElem = document.createElement('td');
+                    var x = document.createElement("input");
+                    x.setAttribute("type", "button");
+                    x.setAttribute("value", "PLAY");
+                    x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + codec_methods[ii] + "/" + file_list[j] + ".mp3')");
+                    colElem.appendChild(x);
+                    colElem.style.color = txt_color;
+                    colElem.style.center = true;
+                    rowElem.appendChild(colElem);
+                }
+
+                tableElem.appendChild(rowElem);
+
+                if ((j+1) % 10 === 0) {
+                    flip = bg_color
+                    bg_color = txt_color;
+                    txt_color = flip;
+                }
+            }
+
+            return tableElem;
+        }
+
+        function fetch_result(){
+            $(window).ready(function() {
+                dataset=$("#dataset").val();
+                tasks=$("#tasks").val();
+                $("#result-div").empty();
+                if (dataset === 'ljspeech') {
+                    if (tasks === 'codec') {
+                        tasks = 'resynthesis';
+                    }
+                    $("#tasks").empty();
+                    $("#tasks").append('<option value="resynthesis">Resynthesis</option>');
+                    $("#tasks").append('<option value="voice_conversion">Voice Conversion</option>');
+                    $("#tasks").val(tasks);
+                } else {
+                    $("#tasks").empty();
+                    $("#tasks").append('<option value="resynthesis">Resynthesis</option>');
+                    $("#tasks").append('<option value="voice_conversion">Voice Conversion</option>');
+                    $("#tasks").append('<option value="codec">Codec (Unseen Speakers)</option>');
+                    $("#tasks").val(tasks);
+                }
+
+                $("#result-div").append(createTable());
+                if (tasks === 'voice_conversion' || tasks === 'resynthesis') {
+                    let footer = document.createElement('p');
+                    footer.append('* Additional 20 units used for pitch stream.');
+                    $("#result-div").append(footer);
+                }
+                unlock();
+            });
+        }
+
+        function record(sel) {
+            lock();
+            fetch_result();
+        }
+
+        window.addEventListener('popstate', function(e) {
+            preload(e.state["dataset"], e.state["tasks"], false);
+        });
+    </script>
+
+<div class="content-container">
+    Sample paged based on <a style="color:rgb(22, 38, 67)"  href="https://daps.cs.princeton.edu/projects/HiFi-GAN/index.php"> HiFi-GAN</a> page.  
+</div>
+</body>
+</html>
