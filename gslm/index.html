@@ -13,7 +13,7 @@
         <br>
             <b>Kushal Lakhotia*</b>, <b>Evgeny Kharitonov*</b>, Wei-Ning Hsu, Yossi Adi, Adam Polyak, Benjamin Bolte, Tu-Anh Nguyen, Jade Copet, <br/> Alexei Baevski, Michael Auli, Alexis Conneau, Adelrahman Mohamed, Emmanuel Dupoux
       </p>
-      <p><i>Transactions of the Association for Computational Linguistics</i></p>
+      <p>In press in <i>Transactions of the Association for Computational Linguistics</i></p>
         <p>
             [<a href="https://arxiv.org/abs/2102.01192">Paper</a>]
         </p>
@@ -33,7 +33,14 @@
 
 <div class="content-container">
     <script src="wavesurfer.js"></script>
-    <div class="content-title">Conditional Examples</div>
+<div class="content-title">Conditional Examples</div>
+<p><i>In conditional generation, the system encodes a waveform prompt
+    into pseudo-text, which is fed to the language model 
+        from which a continuation is sampled. The resulting extended pseudo-text is then fed to the decoder to produce a new waveform. 
+        The entire pipeline is trained without supervision or
+    text. Below are samples from our worst and best models,
+    compared to a supervised system 
+        trained from text.</i></p>   
     <table border = "1" class="inlineTable" >
         <col width="30">
         <col width="300">
@@ -216,7 +223,9 @@
 
 <div class="content-container">
     <script src="wavesurfer.js"></script>
-    <div class="content-title">Unconditional Examples</div>
+<div class="content-title">Unconditional Examples</div>
+<p><i>In unconditional generation, a pseudo-text is sampled from the
+    language model and synthetized into a waveform. </i></p>
     <table border = "1" class="inlineTable" >
         <col width="30">
         <col width="300">
@@ -358,7 +367,11 @@
 </div>
 
 <div class="content-container">
-    <div class="content-title">Samples</div>
+<div class="content-title">Samples</div>
+<p><i>More samples are provided below, as a function of the dataset
+used to train the voice, the number of units and the generation
+task. Four different encoder types can be compared (CPC, HuBERT,
+LogMel and Wav2Vec2) and a supervised character-based system.</i></p>
     <div id='descript'>
     </div>
     <div id='legend'>
