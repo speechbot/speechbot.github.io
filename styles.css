@@ -389,3 +389,20 @@ a.btn.disabled, fieldset:disabled a.btn {
     box-shadow: 0 0 0 .2rem rgba(22, 38, 67, .5)
 }
 
+.row {
+  display: -ms-flexbox;
+  display: flex;  
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;  
+  -ms-flex-pack: center !important;
+  justify-content: center !important;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col{ 
+  -ms-flex: 0 0 33.333333%;
+  flex: 0 0 33.333333%;
+  max-width: 33.333333%;
+}
+
