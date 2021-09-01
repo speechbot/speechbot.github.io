@@ -8,19 +8,30 @@
     </head>
     <body>
 <div class="container">
-    <div id="text1">Expressive speech modeling and generation with
-      discrete self-supervised units</div>
+    <div id="text1">Text-Free Prosody-Aware Generative Spoken Language Modeling</div>
     <div id="intro">
         <br>
-        <p>
-list of authors
+      <p>
+      Eugene Kharitonov*, Ann Lee*, Adam Polyak, Yossi Adi,Jade Copet, Kushal Lakhotia, Tu-Anh Nguyen, Morgane Rivière,Abdelrahman Mohamed, Emmanuel Dupoux, Wei-Ning Hsu
         </p>
     </div>
 </div>
 <div class="content-container">
     <img src="figure.png" style="width:70%">
     <p>
-abstract.
+  Previous generative spoken language modeling work have used discrete
+  that discard most of the prosodic information, failing to leverage
+  prosody for better comprehension and generation. 
+  We  introduce  a  prosody-aware  generative  spoken language model
+  (pGSLM). It is composed of a multi-stream transformer language
+  model(MS-TLM)  of  speech,  represented  as  discovered  unit  and
+  prosodic  feature  streams,  and an adapted HiFi-GAN model
+  converting MS-TLM outputs to waveforms. Experimental results show that
+  the  pGSLM  can  utilize  prosody  to improve both prosody and
+  content modeling, and also generate more natural,  meaningful,  and coher-ent speech given a spoken prompt.
+
+
+  * equal contribution
     </p>
     <br/>
 </div>
