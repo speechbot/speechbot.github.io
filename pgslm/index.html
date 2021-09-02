@@ -49,15 +49,14 @@
     <div class="option-div">
     <label for="dataset">Choose a dataset:</label>
     <select id="dataset" onchange=record(this)>
-        <option value=vctk>VCTK</option>
-        <option value=ljspeech>LJ</option>
+        <option value=librispeech>LibriSpeech</option>
+        <option value=blizzard>Blizzard</option>
     </select></div>
     <div class="option-div" id="tasks-div">
         <label for="tasks">Choose task:</label>
         <select id="tasks" onchange=record(this)>
-            <option value="resynthesis">Resynthesis</option>
-            <option value="voice_conversion">Voice Conversion</option>
-            <option value="codec">Codec (Unseen Speakers)</option>
+            <option value="speech_cont">Speech continuation</option>
+            <option value="prosody_cont">Prosody continuation</option>
         </select>
     </div>
     <div id="result-div"></div>
@@ -102,265 +101,34 @@
         /* Highlights the navigation bar button corresponding to page
         to indicate which page a user is currently viewing.
         */
-        var tasks="resynthesis";
-        var dataset="vctk";
+        var tasks="speech_cont";
+        var dataset="librispeech";
 
         var methods = [
-            "cpc",
-            "vqvae",
-            "hubert",
+            "oracle",
+            "method5",
+            "method1",
+            "method2",
+            "method4",
+            "method3",
         ];
 
         var method_to_hdr = {
-            "cpc": "CPC* \n 100 Units",
-            "hubert": "HuBERT* \n 100 Units",
-            "vqvae": "VQ-VAE* \n 256 Units",
-            "gt": "Ground Truth",
+            "method1": "no-quant, w/o prosody input" ,
+            "method2": "no-quant, w/ prosody input",
+            "method3": "quant, w/ prosody input (proposed)",
+            "method4": "quant, w/o prosody input",
+            "method5": "Resynth",
+            "oracle": "Original",
         };
 
         var task_to_hdr = {
-            "codec": "Codec",
-            "voice_conversion": "Voice Conversion",
-            "resynthesis": "Resynthesis",
+            "speech_cont": "Speech cont.",
+            "prosody_cont": "Prosody cont.",
         };
-        
-        var vctk_recon_file_list = [
-             'p240_215',
-             'p279_314',
-             'p252_005',
-             'p304_109',
-             'p280_310',
-             'p293_181',
-             'p266_124',
-             'p323_035',
-             'p361_355',
-             'p279_216',
-             'p257_247',
-             'p311_383',
-             'p248_154',
-             'p300_032',
-             'p302_129',
-             'p340_413',
-             'p226_180',
-             'p345_043',
-             'p361_116',
-             'p316_400'
-        ];
-
-        var vctk_vc_file_list = [
-             'p268_140_96',
-             'p280_062_44',
-             'p329_194_55',
-             'p244_301_37',
-             'p301_175_82',
-             'p287_269_81',
-             'p229_229_41',
-             'p248_154_1',
-             'p230_143_41',
-             'p299_275_66',
-             'p229_195_19',
-             'p245_207_39',
-             'p251_018_40',
-             'p316_387_41',
-             'p252_320_83',
-             'p303_084_8',
-             'p243_118_32',
-             'p238_293_29',
-             'p276_056_34',
-             'p233_015_50',
-        ];
-
-        var lj_recon_file_list = [
-             'LJ047-0164',
-             'LJ004-0163',
-             'LJ007-0112',
-             'LJ018-0079',
-             'LJ007-0196',
-             'LJ048-0277',
-             'LJ010-0050',
-             'LJ025-0119',
-             'LJ008-0265',
-             'LJ018-0351',
-             'LJ018-0305',
-             'LJ007-0130',
-             'LJ022-0021',
-             'LJ035-0057',
-             'LJ029-0005',
-             'LJ010-0200',
-             'LJ016-0190',
-             'LJ037-0200',
-             'LJ007-0201',
-             'LJ016-0395',
-        ];
-
-        var lj_vc_file_list = [
-             'p305_373_0',
-             'p330_021_0',
-             'p297_218_0',
-             'p362_134_0',
-             'p361_055_0',
-             'p294_423_0',
-             'p329_222_0',
-             'p305_367_0',
-             'p333_394_0',
-             'p339_338_0',
-             'p310_313_0',
-             'p345_109_0',
-             'p300_193_0',
-             'p301_175_0',
-             'p299_364_0',
-             'p318_302_0',
-             'p360_050_0',
-             'p334_041_0',
-             'p341_171_0',
-             'p311_098_0',
-        ];
-
-        var id_to_spkr = [
-             'p225',
-             'p226',
-             'p227',
-             'p228',
-             'p229',
-             'p230',
-             'p231',
-             'p232',
-             'p233',
-             'p234',
-             'p236',
-             'p237',
-             'p238',
-             'p239',
-             'p240',
-             'p241',
-             'p243',
-             'p244',
-             'p245',
-             'p246',
-             'p247',
-             'p248',
-             'p249',
-             'p250',
-             'p251',
-             'p252',
-             'p253',
-             'p254',
-             'p255',
-             'p256',
-             'p257',
-             'p258',
-             'p259',
-             'p260',
-             'p261',
-             'p262',
-             'p263',
-             'p264',
-             'p265',
-             'p266',
-             'p267',
-             'p268',
-             'p269',
-             'p270',
-             'p271',
-             'p272',
-             'p273',
-             'p274',
-             'p275',
-             'p276',
-             'p277',
-             'p278',
-             'p279',
-             'p280',
-             'p281',
-             'p282',
-             'p283',
-             'p284',
-             'p285',
-             'p286',
-             'p287',
-             'p288',
-             'p292',
-             'p293',
-             'p294',
-             'p295',
-             'p297',
-             'p298',
-             'p299',
-             'p300',
-             'p301',
-             'p302',
-             'p303',
-             'p304',
-             'p305',
-             'p306',
-             'p307',
-             'p308',
-             'p310',
-             'p311',
-             'p312',
-             'p313',
-             'p314',
-             'p315',
-             'p316',
-             'p317',
-             'p318',
-             'p323',
-             'p326',
-             'p329',
-             'p330',
-             'p333',
-             'p334',
-             'p335',
-             'p336',
-             'p339',
-             'p340',
-             'p341',
-             'p343',
-             'p345',
-             'p347',
-             'p351',
-             'p360',
-             'p361',
-             'p362',
-             'p363',
-             'p364',
-             'p374',
-             'p376'
-        ];
-
-        var codec_file_list = [
-             'p314_136',
-             'p316_228',
-             'p287_068',
-             'p316_226',
-             'p316_097',
-             'p237_215',
-             'p316_172',
-             'p244_328',
-             'p316_349',
-             'p244_162',
-             'p316_009',
-             'p244_240',
-             'p316_415',
-             'p237_040',
-             'p244_069',
-             'p316_043',
-             'p244_351',
-             'p244_336',
-             'p316_034',
-             'p244_219'
-        ];
-
-        var file_lists = {
-            "vctk_resynthesis": vctk_recon_file_list,
-            "vctk_voice_conversion": vctk_vc_file_list,
-            "vctk_codec": codec_file_list,
-            "ljspeech_resynthesis": lj_recon_file_list,
-            "ljspeech_voice_conversion": lj_vc_file_list,
-        };
-
-        // var root = 'https://dl.fbaipublicfiles.com/speechbot/demo_samples';
-        var root = './audio';
+      
+        //var root = './audio';
+        var root = 'https://dl.fbaipublicfiles.com/textless_nlp/pgslm/demo'
 
         function lock(){
             $('#dataset').attr('disabled', 'disabled');
@@ -378,7 +146,7 @@
             $('#tasks').val(tasks);
             $("#result-div").empty();
             $("#result-div").append(createTable());
-            if (tasks === 'voice_conversion' || tasks === 'resynthesis') {
+            if (false) { //tasks === 'voice_conversion' || tasks === 'resynthesis') {
                 let footer = document.createElement('p');
                 footer.append('* Additional 20 units used for pitch stream.');
                 $("#result-div").append(footer);
@@ -392,164 +160,18 @@
             var tableElem;
             tableElem = document.createElement('table');
 
-            if (tasks === 'voice_conversion') {
-                return voice_conversion(tableElem);
-            } else if (tasks === 'resynthesis') {
-                return resynthesis(tableElem);
-            } else if (tasks === 'codec') {
-                return codec(tableElem);
+            if (tasks === 'speech_cont') {
+                return speech_continuation(tableElem);
             }
         }
 
-        function voice_conversion(tableElem) {
-            var headline, rowElem, colElem;
-
-            headline = document.createElement('tr');
-
-            colElem = document.createElement('td');
-            colElem.appendChild(document.createTextNode('ID'));
-            colElem.style.color = 'rgb(22, 38, 67)';
-            colElem.style.center = true;
-            headline.appendChild(colElem);
-
-            colElem = document.createElement('td');
-            colElem.appendChild(document.createTextNode('Task'));
-            colElem.style.color = 'rgb(22, 38, 67)';
-            colElem.style.center = true;
-            headline.appendChild(colElem);
-
-            colElem = document.createElement('td');
-            colElem.appendChild(document.createTextNode('Source Speaker'));
-            colElem.style.color = 'rgb(22, 38, 67)';
-            colElem.style.center = true;
-            headline.appendChild(colElem);
-
-            colElem = document.createElement('td');
-            colElem.appendChild(document.createTextNode('Target Speaker'));
-            colElem.style.color = 'rgb(22, 38, 67)';
-            colElem.style.center = true;
-            headline.appendChild(colElem);
-
-            colElem = document.createElement('td');
-            colElem.appendChild(document.createTextNode('Input'));
-            colElem.style.color = 'rgb(22, 38, 67)';
-            colElem.style.center = true;
-            headline.appendChild(colElem);
-
-            for (let ii = 0; ii < methods.length; ii++) {
-                colElem = document.createElement('td');
-                colElem.appendChild(document.createTextNode(method_to_hdr[methods[ii]]));
-                colElem.style.color = 'rgb(22, 38, 67)';
-                colElem.style.center = true;
-                colElem.style.whiteSpace = 'pre';
-                headline.appendChild(colElem);
-            }
-
-            colElem = document.createElement('td');
-            colElem.appendChild(document.createTextNode('Target Reference'));
-            colElem.style.color = 'rgb(22, 38, 67)';
-            colElem.style.center = true;
-            headline.appendChild(colElem);
-
-            tableElem.appendChild(headline);
-
-            var bg_color='white';
-            var txt_color='rgb(22, 38, 67)';
-
-            var file_list = file_lists[dataset + "_" + tasks];
-            var N = file_list.length;
-            for (var j = 0; j < N; j++) {
-                rowElem = document.createElement('tr');
-                rowElem.style.backgroundColor = bg_color;
-
-                colElem = document.createElement('td');
-                colElem.appendChild(document.createTextNode(j.toString()));
-                colElem.style.color = txt_color;
-                colElem.style.center = true;
-                rowElem.appendChild(colElem);
-
-                colElem = document.createElement('td');
-                colElem.appendChild(document.createTextNode(task_to_hdr[tasks]));
-                colElem.style.color = txt_color;
-                colElem.style.center = true;
-                rowElem.appendChild(colElem);
-
-                var parts = file_list[j].split('_');
-                colElem = document.createElement('td');
-                colElem.appendChild(document.createTextNode(parts[0]));
-                colElem.style.color = txt_color;
-                colElem.style.center = true;
-                rowElem.appendChild(colElem);
-
-                colElem = document.createElement('td');
-                var trgt_spkr = null;
-                if (dataset === "vctk") {
-                    trgt_spkr = id_to_spkr[parseInt(parts[2])];
-                } else {
-                    trgt_spkr = "LJ";
-                }
-                colElem.appendChild(document.createTextNode(trgt_spkr));
-                colElem.style.color = txt_color;
-                colElem.style.center = true;
-                rowElem.appendChild(colElem);
-
-                colElem = document.createElement('td');
-                var x = document.createElement("input");
-                x.setAttribute("type", "button");
-                x.setAttribute("value", "PLAY");
-                x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + "gt" + "/" + file_list[j] + ".mp3')");
-                colElem.appendChild(x);
-                colElem.style.color = txt_color;
-                colElem.style.center = true;
-                rowElem.appendChild(colElem);
-
-                for (var ii = 0; ii < methods.length; ii++) {
-                    colElem = document.createElement('td');
-                    var x = document.createElement("input");
-                    x.setAttribute("type", "button");
-                    x.setAttribute("value", "PLAY");
-                    x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + file_list[j] + ".mp3')");
-                    colElem.appendChild(x);
-                    colElem.style.color = txt_color;
-                    colElem.style.center = true;
-                    rowElem.appendChild(colElem);
-                }
-
-                colElem = document.createElement('td');
-                var x = document.createElement("input");
-                x.setAttribute("type", "button");
-                x.setAttribute("value", "PLAY");
-                x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + "ref" + "/" + file_list[j] + ".mp3')");
-                colElem.appendChild(x);
-                colElem.style.color = txt_color;
-                colElem.style.center = true;
-                rowElem.appendChild(colElem);
-
-                tableElem.appendChild(rowElem);
-
-                if ((j+1) % 10 === 0) {
-                    flip = bg_color
-                    bg_color = txt_color;
-                    txt_color = flip;
-                }
-            }
-
-            return tableElem;
-        }
-
-        function resynthesis(tableElem) {
+        function speech_continuation(tableElem) {
              var headline, colElem, rowElem;
 
             headline = document.createElement('tr');
 
             colElem = document.createElement('td');
             colElem.appendChild(document.createTextNode('ID'));
-            colElem.style.color = 'rgb(22, 38, 67)';
-            colElem.style.center = true;
-            headline.appendChild(colElem);
-
-            colElem = document.createElement('td');
-            colElem.appendChild(document.createTextNode('Task'));
             colElem.style.color = 'rgb(22, 38, 67)';
             colElem.style.center = true;
             headline.appendChild(colElem);
@@ -563,19 +185,12 @@
                 headline.appendChild(colElem);
             }
 
-            colElem = document.createElement('td');
-            colElem.appendChild(document.createTextNode('Ground Truth'));
-            colElem.style.color = 'rgb(22, 38, 67)';
-            colElem.style.center = true;
-            headline.appendChild(colElem);
-
             tableElem.appendChild(headline);
 
             var bg_color='white';
             var txt_color='rgb(22, 38, 67)';
 
-            var file_list = file_lists[dataset + "_" + tasks];
-            var N = file_list.length;
+            var N = 100;
             for (var j = 0; j < N; j++) {
                 rowElem = document.createElement('tr');
                 rowElem.style.backgroundColor = bg_color;
@@ -586,113 +201,20 @@
                 colElem.style.center = true;
                 rowElem.appendChild(colElem);
 
-                colElem = document.createElement('td');
+                /*colElem = document.createElement('td');
                 colElem.appendChild(document.createTextNode(task_to_hdr[tasks]));
                 colElem.style.color = txt_color;
                 colElem.style.center = true;
-                rowElem.appendChild(colElem);
+                rowElem.appendChild(colElem);*/
 
                 for (var ii = 0; ii < methods.length; ii++) {
                     colElem = document.createElement('td');
                     var x = document.createElement("input");
                     x.setAttribute("type", "button");
                     x.setAttribute("value", "PLAY");
-                    x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + file_list[j] + ".mp3')");
-                    colElem.appendChild(x);
-                    colElem.style.color = txt_color;
-                    colElem.style.center = true;
-                    rowElem.appendChild(colElem);
-                }
-
-                    colElem = document.createElement('td');
-                    var x = document.createElement("input");
-                    x.setAttribute("type", "button");
-                    x.setAttribute("value", "PLAY");
-                    x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + "gt" + "/" + file_list[j] + ".mp3')");
-                    colElem.appendChild(x);
-                    colElem.style.color = txt_color;
-                    colElem.style.center = true;
-                    rowElem.appendChild(colElem);
-
-                tableElem.appendChild(rowElem);
-
-                if ((j+1) % 10 === 0) {
-                    flip = bg_color
-                    bg_color = txt_color;
-                    txt_color = flip;
-                }
-            }
-
-            return tableElem;
-        }
-
-        function codec(tableElem) {
-             var headline, colElem, rowElem;
-
-            headline = document.createElement('tr');
-
-            colElem = document.createElement('td');
-            colElem.appendChild(document.createTextNode('ID'));
-            colElem.style.color = 'rgb(22, 38, 67)';
-            colElem.style.center = true;
-            headline.appendChild(colElem);
-
-            colElem = document.createElement('td');
-            colElem.appendChild(document.createTextNode('Task'));
-            colElem.style.color = 'rgb(22, 38, 67)';
-            colElem.style.center = true;
-            headline.appendChild(colElem);
-
-            const codec_methods = ['speex_4000', 'codec2', 'lpcnet', 'opus', 'vqvae', 'hubert50', 'hubert100', 'hubert200', 'gt'];
-            const codec_method_to_hdr = {
-                'speex_4000': 'Speex \n 4000bps',
-                'codec2': 'Codec2 \n 2400bps',
-                'opus': 'Opus \n 9000bps',
-                'lpcnet': 'LPCNet \n 1600bps',
-                'vqvae': 'VQ-VAE \n 800bps',
-                'hubert50': 'HuBERT 50 \n 365bps',
-                'hubert100': 'HuBERT 100 \n 415bps',
-                'hubert200': 'HuBERT 200 \n 465bps',
-                'gt': 'Ground Truth \n 256000bps',
-            };
-            for (let ii = 0; ii < codec_methods.length; ii++) {
-                colElem = document.createElement('td');
-                colElem.appendChild(document.createTextNode(codec_method_to_hdr[codec_methods[ii]]));
-                colElem.style.color = 'rgb(22, 38, 67)';
-                colElem.style.center = true;
-                colElem.style.whiteSpace = 'pre';
-                headline.appendChild(colElem);
-            }
-
-            tableElem.appendChild(headline);
-
-            var bg_color='white';
-            var txt_color='rgb(22, 38, 67)';
-
-            var file_list = file_lists[dataset + "_" + tasks];
-            var N = file_list.length;
-            for (var j = 0; j < N; j++) {
-                rowElem = document.createElement('tr');
-                rowElem.style.backgroundColor = bg_color;
-
-                colElem = document.createElement('td');
-                colElem.appendChild(document.createTextNode(j.toString()));
-                colElem.style.color = txt_color;
-                colElem.style.center = true;
-                rowElem.appendChild(colElem);
-
-                colElem = document.createElement('td');
-                colElem.appendChild(document.createTextNode(task_to_hdr[tasks]));
-                colElem.style.color = txt_color;
-                colElem.style.center = true;
-                rowElem.appendChild(colElem);
-
-                for (var ii = 0; ii < codec_methods.length; ii++) {
-                    colElem = document.createElement('td');
-                    var x = document.createElement("input");
-                    x.setAttribute("type", "button");
-                    x.setAttribute("value", "PLAY");
-                    x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + codec_methods[ii] + "/" + file_list[j] + ".mp3')");
+                    var audio_path = root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + j.toString() + ".wav";
+                    console.log("audio path", audio_path);
+                    x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + j.toString() + ".wav')");
                     colElem.appendChild(x);
                     colElem.style.color = txt_color;
                     colElem.style.center = true;
@@ -716,10 +238,7 @@
                 dataset=$("#dataset").val();
                 tasks=$("#tasks").val();
                 $("#result-div").empty();
-                if (dataset === 'ljspeech') {
-                    if (tasks === 'codec') {
-                        tasks = 'resynthesis';
-                    }
+                /*if (dataset === 'librispeech') {
                     $("#tasks").empty();
                     $("#tasks").append('<option value="resynthesis">Resynthesis</option>');
                     $("#tasks").append('<option value="voice_conversion">Voice Conversion</option>');
@@ -731,15 +250,17 @@
                     $("#tasks").append('<option value="codec">Codec (Unseen Speakers)</option>');
                     $("#tasks").val(tasks);
                 }
+                */
 
                 $("#result-div").append(createTable());
-                if (tasks === 'voice_conversion' || tasks === 'resynthesis') {
+                if (false) { //tasks === 'voice_conversion' || tasks === 'resynthesis') {
                     let footer = document.createElement('p');
                     footer.append('* Additional 20 units used for pitch stream.');
                     $("#result-div").append(footer);
                 }
                 unlock();
             });
+            
         }
 
         function record(sel) {
