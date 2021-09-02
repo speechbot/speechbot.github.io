@@ -50,13 +50,13 @@
     <label for="dataset">Choose a dataset:</label>
     <select id="dataset" onchange=record(this)>
         <option value=librispeech>LibriSpeech</option>
-        <option value=blizzard>Blizzard</option>
+        <!-- <option value=blizzard>Blizzard</option> -->
     </select></div>
     <div class="option-div" id="tasks-div">
         <label for="tasks">Choose task:</label>
         <select id="tasks" onchange=record(this)>
             <option value="speech_cont">Speech continuation</option>
-            <option value="prosody_cont">Prosody continuation</option>
+            <!-- <option value="prosody_cont">Prosody continuation</option> -->
         </select>
     </div>
     <div id="result-div"></div>
@@ -127,8 +127,7 @@
             "prosody_cont": "Prosody cont.",
         };
       
-        //var root = './audio';
-        var root = 'https://dl.fbaipublicfiles.com/textless_nlp/pgslm/demo'
+        var root = 'https://dl.fbaipublicfiles.com/textless_nlp/pgslm/demo';
 
         function lock(){
             $('#dataset').attr('disabled', 'disabled');
