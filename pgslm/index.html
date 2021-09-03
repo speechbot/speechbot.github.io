@@ -12,7 +12,7 @@
     <div id="intro">
         <br>
       <p>
-      Eugene Kharitonov*, Ann Lee*, Adam Polyak, Yossi Adi,Jade Copet, Kushal Lakhotia, Tu-Anh Nguyen, Morgane Rivière, Abdelrahman Mohamed, Emmanuel Dupoux, Wei-Ning Hsu
+      Eugene Kharitonov*, Ann Lee*, Adam Polyak, Yossi Adi, Jade Copet, Kushal Lakhotia, Tu-Anh Nguyen, Morgane Rivière, Abdelrahman Mohamed, Emmanuel Dupoux, Wei-Ning Hsu
         </p>
     </div>
 </div>
@@ -52,6 +52,7 @@
         <label for="tasks">Choose task:</label>
         <select id="tasks" onchange=record(this)>
             <option value="speech_cont">Speech continuation</option>
+            <option value="prosody_cont">Prosody continuation</option>
             <!-- <option value="prosody_cont">Prosody continuation</option> -->
         </select>
     </div>
@@ -164,12 +165,10 @@
             var tableElem;
             tableElem = document.createElement('table');
 
-            if (tasks === 'speech_cont') {
-                return speech_continuation(tableElem);
-            }
+            return buildContinuationTable(tableElem);
         }
 
-        function speech_continuation(tableElem) {
+        function buildContinuationTable(tableElem) {
              var headline, colElem, rowElem;
 
             headline = document.createElement('tr');
