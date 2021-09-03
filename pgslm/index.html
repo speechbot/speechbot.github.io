@@ -56,11 +56,9 @@
         </select>
     </div>
     <div id='legend'>
-      <ul style="list-style-type:none;font-size:80%;font-style:italic">
-	<li>-Q: non quantized (continuous) prosody</li>
-	<li>+Q: quantized prosody</li>
-	<li>-P: no prosody in the input</li>
-	<li>+P: prosody in the input</li>
+      <ul style="list-style-type:none;font-size:80%">
+	<li>✅: model has prosody (unit duration and F0) as a part of its input</li>
+	<li>❌: model has no prosody in its input</li>
         </ul>    
     </div>
     <div id="result-div"></div>
@@ -110,6 +108,7 @@
         var dataset="librispeech";
 
         var methods = [
+            "prompts",
             "oracle",
             "method5",
             "method1",
@@ -125,6 +124,7 @@
             "method4": "+Q-P", /* quant, w/o prosody input */ 
             "method5": "Resynth",
             "oracle": "Original",
+            "prompt": "Prompt",
         };
 
         var task_to_hdr = {
@@ -174,8 +174,53 @@
 
             headline = document.createElement('tr');
 
+            var names = ["", "Prompt", "Original", "Resynth"];
+            names.forEach((name) => {
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(name));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                headline.appendChild(colElem);
+            });
+
+            var names = ["Continuous prosody", "Quantized prosody"];
+            names.forEach((name) => {
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(name));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                colElem.colSpan = 2;
+                headline.appendChild(colElem);
+            });
+
+            tableElem.appendChild(headline);
+            headline = document.createElement('tr');
+            for (var _ = 0; _ < 4; ++_) {
+                colElem = document.createElement('td');
+                headline.appendChild(colElem);
+            }
+
+            for (var ii = 0; ii < 4; ++ii) {
+                var hasProsodyInput = (ii % 2) == 1;
+                var name = hasProsodyInput? "❎" : "❌";
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(name));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                headline.appendChild(colElem);
+            };
+
+            
+            /*
             colElem = document.createElement('td');
             colElem.appendChild(document.createTextNode('ID'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('Prompt'));
             colElem.style.color = 'rgb(22, 38, 67)';
             colElem.style.center = true;
             headline.appendChild(colElem);
@@ -188,6 +233,7 @@
                 colElem.style.whiteSpace = 'pre';
                 headline.appendChild(colElem);
             }
+            */
 
             tableElem.appendChild(headline);
 
@@ -217,7 +263,6 @@
                     x.setAttribute("type", "button");
                     x.setAttribute("value", "PLAY");
                     var audio_path = root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + j.toString() + ".wav";
-                    console.log("audio path", audio_path);
                     x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + j.toString() + ".wav')");
                     colElem.appendChild(x);
                     colElem.style.color = txt_color;
