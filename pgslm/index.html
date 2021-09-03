@@ -42,10 +42,6 @@
     <div class="content-title">Samples</div>
     <div id='descript'>
     </div>
-    <div id='legend'>
-        <ul style="list-style-type:circle">
-        </ul>    
-    </div>
     <div class="option-div">
     <label for="dataset">Choose a dataset:</label>
     <select id="dataset" onchange=record(this)>
@@ -59,7 +55,16 @@
             <!-- <option value="prosody_cont">Prosody continuation</option> -->
         </select>
     </div>
+    <div id='legend'>
+      <ul style="list-style-type:none;font-size:80%;font-style:italic">
+	<li>-Q: non quantized (continuous) prosody</li>
+	<li>+Q: quantized prosody</li>
+	<li>-P: no prosody in the input</li>
+	<li>+P: prosody in the input</li>
+        </ul>    
+    </div>
     <div id="result-div"></div>
+    
     </div>
 
 <div id="loading-status">Loading......</div>
@@ -114,10 +119,10 @@
         ];
 
         var method_to_hdr = {
-            "method1": "no-quant, w/o prosody input" ,
-            "method2": "no-quant, w/ prosody input",
-            "method3": "quant, w/ prosody input (proposed)",
-            "method4": "quant, w/o prosody input",
+            "method1": "-Q-P" , /*no-quant, w/o prosody input */
+            "method2": "-Q+P", /* no-quant, w/ prosody input */
+            "method3": "+Q+P (proposed)",  /* quant, w/ prosody input (proposed) */
+            "method4": "+Q-P", /* quant, w/o prosody input */ 
             "method5": "Resynth",
             "oracle": "Original",
         };
