@@ -38,6 +38,231 @@
 </div>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
+
+<div class="content-container">
+    <script src="wavesurfer.js"></script>
+<div class="content-title">Conditional Speech Generation Examples</div>
+<p><i>In conditional generation, the system encodes a waveform prompt into a sequence of tuples of pseudo-text units, normalized F0, and duration.
+   This sequence is then fed to the multi-stream language model (MS-TLM) from which a continuation is sampled in an auto-regressive manner.
+   The result is then passed to the decoder to produce a new waveform.  The entire pipeline is trained without supervision or text. 
+   Below are samples from our worst and best models, compared to a supervised system trained from text.</i></p>   
+    <table border = "1" class="inlineTable" >
+        <!-- <col width="30">
+        <col width="300">
+        <col width="300">
+        <col width="300">
+        <col width="300">
+        <col width="300">
+        <col width="300">
+        <col width="300"> -->
+        <tr>
+            <td></td>
+            <td>Prompt</td>
+            <td>Resynthesis</td>
+            <td colspan="2">Continuous Prosody</td>
+            <td colspan="2">Quantized Prosody</td>
+        </tr>
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>❌</th>
+            <th>✅</th>
+            <th>❌</th>
+            <th>✅</th>
+        </tr>
+        <tr>
+            <th>0</th>
+            <td>
+                <div id="prompts_1_header_waveform"></div>
+                <button id="prompts_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_prompts_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_prompts_1 = WaveSurfer.create({
+                                container: '#prompts_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_prompts_1.load('./audio/speech_cont/librispeech/prompts/4.wav');
+                </script>
+           </td>
+            <td>
+                <div id="method5_1_header_waveform"></div>
+                <button id="method5_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_method5_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_logmel_1 = WaveSurfer.create({
+                                container: '#method5_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_logmel_1.load('./audio/speech_cont/librispeech/method5/4.wav')
+                </script>
+           </td>
+            <td>
+                <div id="method1_1_header_waveform"></div>
+                <button id="method1_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_method1_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_method1_1 = WaveSurfer.create({
+                                container: '#method1_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_method1_1.load('./audio/speech_cont/librispeech/method1/4.wav')
+                </script>
+           </td>
+            <td>
+                <div id="method2_1_header_waveform"></div>
+                <button id="method2_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_method2_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_asr_1 = WaveSurfer.create({
+                                container: '#method2_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_method2_1.load('./audio/speech_cont/librispeech/method2/4.wav');
+                </script>
+           </td>
+           <td>
+            <div id="method4_1_header_waveform"></div>
+            <button id="method4_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_method4_1.playPause()">
+                <i class="fa fa-play"></i>
+                Play
+                /
+                <i class="fa fa-pause"></i>
+                Pause
+            </button>
+            <script>
+                var wavesurfer_method4 = WaveSurfer.create({
+                            container: '#method4_1_header_waveform',
+                            waveColor: 'violet',
+                            progressColor: 'purple'
+                        });
+                wavesurfer_method4_1.load('./audio/speech_cont/librispeech/method4/4.wav');
+            </script>
+            </td>
+            <td>
+                <div id="method3_1_header_waveform"></div>
+                <button id="method3_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_method3_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_method4 = WaveSurfer.create({
+                                container: '#method3_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_method3_1.load('./audio/speech_cont/librispeech/method3/4.wav');
+                </script>
+                </td>
+
+        </tr>
+        <!--
+        <tr>
+            <th>1</th>
+            <td>
+                <div id="prompts_2_header_waveform"></div>
+                <button id="prompts_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_prompts_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_prompts_2 = WaveSurfer.create({
+                                container: '#prompts_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_prompts_2.load('./audio/prompts/8463-294825-0001__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="logmel_2_header_waveform"></div>
+                <button id="logmel_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_logmel_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_logmel_2 = WaveSurfer.create({
+                                container: '#logmel_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_logmel_2.load('./audio/logmel/cond/8463-294825-0001__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="hubert_2_header_waveform"></div>
+                <button id="hubert_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_hubert_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_hubert_2 = WaveSurfer.create({
+                                container: '#hubert_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_hubert_2.load('./audio/hubert/cond/8463-294825-0001__0.wav');
+                </script>
+           </td>
+            <td>
+                <div id="asr_2_header_waveform"></div>
+                <button id="asr_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_asr_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_asr_2 = WaveSurfer.create({
+                                container: '#asr_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple'
+                            });
+                    wavesurfer_asr_2.load('./audio/asr/cond/8463-294825-0001__0.wav');
+                </script>
+           </td>
+        </tr>
+        -->
+    </table>
+</div>
+
 <div class="content-container">
     <div class="content-title">Samples</div>
     <div id='descript'>
