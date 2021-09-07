@@ -42,10 +42,10 @@
 <div class="content-container">
     <script src="wavesurfer.js"></script>
 <div class="content-title">Conditional Speech Generation Examples</div>
-<p><i>In conditional generation, the system encodes a waveform prompt into a sequence of tuples of pseudo-text units, normalized F0, and duration.
+<p>In conditional generation, the system encodes a waveform prompt into a sequence of tuples of pseudo-text units, normalized F0, and duration.
    This sequence is then fed to the multi-stream language model (MS-TLM) from which a continuation is sampled in an auto-regressive manner.
    The result is then passed to the decoder to produce a new waveform.  The entire pipeline is trained without supervision or text. 
-   Below are samples from our worst and best models, compared to a supervised system trained from text.</i></p>   
+   Below are prompts, groud-truth continuations (resynthesised), and samples from our models.</p>   
     <table border = "1" class="inlineTable" >
         <!-- <col width="30">
         <col width="300">
@@ -377,7 +377,11 @@
 
 <div class="content-container">
     <div class="content-title">Samples</div>
-    <div id='descript'>
+    <div id='task-description' style="margin-bottom: 1cm;">
+        In the first task, <i>speech generation</i>, MS-TLM models generate continuation of a speech prompt.
+        In the second task, <i>prosody continuation</i>, the models generate prosody streams (duration and normalized F0), while 
+        the stream of units is fixed to that of the ground-truth utterance. For comparison, we additionally provide original utterances
+        as-is and resynthesised using the HiFi-GAN vocoder used by MS-TLM.
     </div>
     <div class="option-div">
     <label for="dataset">Choose a dataset:</label>
