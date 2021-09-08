@@ -19,7 +19,7 @@
 <div class="content-container">
     <img src="figure.png" style="width:40%">
     <p>
-  Previous generative spoken language modeling work have used discrete
+  Previous generative spoken language modeling work have used discrete units
   that discard most of the prosodic information, failing to leverage
   prosody for better comprehension and generation. 
   We  introduce  a  prosody-aware  generative  spoken language model
@@ -42,10 +42,17 @@
 <div class="content-container">
     <script src="wavesurfer.js"></script>
 <div class="content-title">Conditional Speech Generation Examples</div>
-<p>In conditional generation, the system encodes a waveform prompt into a sequence of tuples of pseudo-text units, normalized F0, and duration.
+<p style="margin-bottom: 1cm;">In conditional generation, the system encodes a waveform prompt into a sequence of tuples of pseudo-text units, normalized F0, and duration.
    This sequence is then fed to the multi-stream language model (MS-TLM) from which a continuation is sampled in an auto-regressive manner.
    The result is then passed to the decoder to produce a new waveform.  The entire pipeline is trained without supervision or text. 
-   Below are prompts, groud-truth continuations (resynthesised), and samples from our models.</p>   
+   Below are prompts, ground-truth continuations (resynthesised), and samples from our models.</p>
+   <div id='legend-teaser'>
+    <ul style="list-style-type:none;font-size:80%">
+  <li>✅: model has prosody (unit duration and F0) as a part of its input</li>
+  <li>❌: model has no prosody in its input</li>
+      </ul>    
+  </div>
+
     <table border = "1" class="inlineTable" >
         <!-- <col width="30">
         <col width="300">
@@ -56,7 +63,6 @@
         <col width="300">
         <col width="300"> -->
         <tr>
-            <td></td>
             <td>Prompt</td>
             <td>Resynthesis</td>
             <td colspan="2">Continuous Prosody</td>
@@ -65,14 +71,12 @@
         <tr>
             <th></th>
             <th></th>
-            <th></th>
             <th>❌</th>
             <th>✅</th>
             <th>❌</th>
             <th>✅</th>
         </tr>
         <tr>
-            <td>4</td>
             <td>
                 <div id="prompts_1_header_waveform"></div>
                 <button id="prompts_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_prompts_1.playPause()">
@@ -184,7 +188,6 @@
 
         </tr>
         <tr>
-            <td>5</td>
             <td>
                 <div id="prompts_2_header_waveform"></div>
                 <button id="prompts_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_prompts_2.playPause()">
