@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Dialogue speech modeling and generation</title>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <script src="jquery-3.5.js"></script>
+    </head>
+    <body>
+<div class="container">
+    <div id="text1">Generative Spoken Dialogue Language Modeling</div>
+    <div id="intro">
+        <br>
+      <p>
+        Tu Anh Nguyen, Eugene Kharitonov, Jade Copet, Yossi Adi, 
+        Wei-Ning Hsu, Ali Elkahky, Paden Tomasello, Robin Algayres, 
+        Benoit Sagot, Abdelrahman Mohamed, Emmanuel Dupoux
+        </p>
+    </div>
+</div>
+<div class="content-container">
+    <img src="figure.png" style="width:80%">
+    <p>
+        We introduce dGSLM, the first "textless" model able to generate audio samples of naturalistic spoken dialogues.  
+        It uses recent work on unsupervised spoken unit discovery coupled with a dual-tower transformer architecture with 
+        cross-attention trained on 2000 hours of two-channel raw conversational audio (Fisher dataset) without any text or 
+        labels. It is able to generate speech, laughter and other paralinguistic signals in the two channels simultaneously 
+        and reproduces naturalistic turn taking.
+  </br>
+  </br>
+    </p>
+    <br/>
+</div>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+
+<div class="content-container">
+    <script src="wavesurfer.js"></script>
+<div class="content-title">Conditional Examples</div>
+<p><i>In conditional generation, the system encodes a stereo waveform prompt
+    into two parallel streams of discrete units (or pseudo-text), which are fed to the Dialogue Language Model (DLM) system,
+        a system attending to both unit streams with the help of cross-attention.
+        The DLM model then generates new pseudo-text and feed them to the decoder to produce a new waveform. 
+        The entire pipeline is trained without supervision or
+    text.</i><br>Below are samples from our best model,
+    compared to the ground truth. Note that the synthesized speakers are different from the original ones, 
+    but we deliberately choose the speakers with the same gender as in original speech.</p>   
+    <table border = "1" class="inlineTable" id="Table1">
+        <col width="30">
+        <col width="300">
+        <col width="300">
+        <col width="300">
+        <col width="300">
+        <tr>
+            <td rowspan="2">ID</td>
+            <td><b><small>original speech</small></b></td>
+            <td colspan="3"><b><small>synthesized speech</small></b></td>
+        </tr>
+        <tr>
+            <td>Prompt</td>
+            <td>Prompt</td>
+            <td>Ground Truth</td>
+            <td>dGSLM</td>
+        </tr>
+        
+        
+        <tr>
+            <th>0</th>
+            <td>
+                <div id="prompts_1_header_waveform"></div>
+                <button id="prompts_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_prompts_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_prompts_1 = WaveSurfer.create({
+                                container: '#prompts_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple',
+                                splitChannels: true,
+                                responsive: true,
+                            });
+                    wavesurfer_prompts_1.load('./audio/stereo/Prompts-Original/fe_03_11555_0s_10s.wav');
+                </script>
+           </td>
+            <td>
+                <div id="logmel_1_header_waveform"></div>
+                <button id="logmel_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_logmel_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_logmel_1 = WaveSurfer.create({
+                                container: '#logmel_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple',
+                                splitChannels: true,
+                                responsive: true,
+                            });
+                    wavesurfer_logmel_1.load('./audio/stereo/Prompts-Resynthesized/fe_03_11555_0s_10s.wav');
+                </script>
+           </td>
+            <td>
+                <div id="hubert_1_header_waveform"></div>
+                <button id="hubert_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_hubert_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_hubert_1 = WaveSurfer.create({
+                                container: '#hubert_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple',
+                                splitChannels: true,
+                                responsive: true,
+                            });
+                    wavesurfer_hubert_1.load('./audio/stereo/GroundTruth-Resynthesized/fe_03_11555_0s_10s.wav');
+                </script>
+           </td>
+            <td>
+                <div id="asr_1_header_waveform"></div>
+                <button id="asr_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_asr_1.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_asr_1 = WaveSurfer.create({
+                                container: '#asr_1_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple',
+                                splitChannels: true,
+                                responsive: true,
+                            });
+                    wavesurfer_asr_1.load('./audio/stereo/dGSLM/fe_03_11555_0s_10s.wav');
+                </script>
+           </td>
+        </tr>
+        <tr>
+            <th>1</th>
+            <td>
+                <div id="prompts_2_header_waveform"></div>
+                <button id="prompts_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_prompts_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_prompts_2 = WaveSurfer.create({
+                                container: '#prompts_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple',
+                                splitChannels: true,
+                                responsive: true,
+                            });
+                    wavesurfer_prompts_2.load('./audio/stereo/Prompts-Original/fe_03_11501_63s_73s.wav');
+                </script>
+           </td>
+            <td>
+                <div id="logmel_2_header_waveform"></div>
+                <button id="logmel_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_logmel_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_logmel_2 = WaveSurfer.create({
+                                container: '#logmel_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple',
+                                splitChannels: true,
+                                responsive: true,
+                            });
+                    wavesurfer_logmel_2.load('./audio/stereo/Prompts-Resynthesized/fe_03_11501_63s_73s.wav');
+                </script>
+           </td>
+            <td>
+                <div id="hubert_2_header_waveform"></div>
+                <button id="hubert_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_hubert_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_hubert_2 = WaveSurfer.create({
+                                container: '#hubert_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple',
+                                splitChannels: true,
+                                responsive: true,
+                            });
+                    wavesurfer_hubert_2.load('./audio/stereo/GroundTruth-Resynthesized/fe_03_11501_63s_73s.wav');
+                </script>
+           </td>
+            <td>
+                <div id="asr_2_header_waveform"></div>
+                <button id="asr_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_asr_2.playPause()">
+                    <i class="fa fa-play"></i>
+                    Play
+                    /
+                    <i class="fa fa-pause"></i>
+                    Pause
+                </button>
+                <script>
+                    var wavesurfer_asr_2 = WaveSurfer.create({
+                                container: '#asr_2_header_waveform',
+                                waveColor: 'violet',
+                                progressColor: 'purple',
+                                splitChannels: true,
+                                responsive: true,
+                            });
+                    wavesurfer_asr_2.load('./audio/stereo/dGSLM/fe_03_11501_63s_73s.wav');
+                </script>
+           </td>
+        </tr>
+    </table>
+</div>
+
+<div class="content-container">
+    <script src="wavesurfer.js"></script>
+<div class="content-title">Unconditional Examples</div>
+<p><i>In unconditional generation, two parallel streams of pseudo-text are sampled from the 
+    DLM and synthetized into a waveform. </i></p>
+    <p><b>Generation 1 </b></p>
+    <div id="uncond_1_header_waveform"></div>
+    <button id="uncond_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_uncond_1.playPause()">
+        <i class="fa fa-play"></i>
+        Play
+        /
+        <i class="fa fa-pause"></i>
+        Pause
+    </button>
+    <script>
+        var wavesurfer_uncond_1 = WaveSurfer.create({
+                    container: '#uncond_1_header_waveform',
+                    waveColor: 'violet',
+                    progressColor: 'purple',
+                    splitChannels: true,
+                    responsive: true,
+                });
+                wavesurfer_uncond_1.load('./audio/uncond_generation/Generation_1.wav');
+    </script>
+
+<p><b>Generation 2 </b></p>
+    <div id="uncond_2_header_waveform"></div>
+    <button id="uncond_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_uncond_2.playPause()">
+        <i class="fa fa-play"></i>
+        Play
+        /
+        <i class="fa fa-pause"></i>
+        Pause
+    </button>
+    <script>
+        var wavesurfer_uncond_2 = WaveSurfer.create({
+                    container: '#uncond_2_header_waveform',
+                    waveColor: 'violet',
+                    progressColor: 'purple',
+                    splitChannels: true,
+                    responsive: true,
+                });
+                wavesurfer_uncond_2.load('./audio/uncond_generation/Generation_2.wav');
+    </script>
+</div>
+
+<div class="content-container">
+    <div class="content-title">Conditional Samples from All Algorithms</div>
+    <div id='task-description' style="margin-bottom: 1cm;">
+        More conditional samples are provided below, with all the language models studied in the paper.  <br>
+        The specifications of all models are listed below<br>
+        <img src="figure2.png" style="width:60%">
+        You will also hear a <b>ding</b> sound at the end of the prompt duration.
+    </div>
+    <!-- <div class="option-div">
+    <label for="dataset">Choose a dataset:</label>
+    <select id="dataset" onchange=record(this)>
+        <option value=librispeech>LibriSpeech</option>
+        <option value=blizzard>Blizzard</option>
+    </select></div>
+    <div class="option-div" id="tasks-div">
+        <label for="tasks">Choose task:</label>
+        <select id="tasks" onchange=record(this)>
+            <option value="speech_cont">Speech continuation</option>
+            <option value="prosody_cont">Prosody continuation</option>
+        </select>
+    </div>
+    <div id='legend'>
+      <ul style="list-style-type:none;font-size:80%">
+	<li>✅: model has prosody (unit duration and F0) as a part of its input</li>
+	<li>❌: model has no prosody in its input</li>
+        </ul>    
+    </div> -->
+    <div id="result-div"></div>
+    
+    </div>
+
+<div id="loading-status">Loading......</div>
+
+<script>
+        var mode = 0;
+        var audio;
+        var filename = null;
+        function play(file_name) {
+            if (filename !== file_name) {
+                if (audio) {
+                    audio.pause();
+                }
+
+                audio = new Audio(file_name);
+                filename = file_name;
+                audio.play();
+            } else {
+                if (audio.paused ) {
+                    audio = new Audio(file_name);
+                    filename = file_name;
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+            }
+        }
+        function play2(file_name, button_id) {
+            var bttn_element = document.getElementById(button_id);
+            if (filename !== file_name) {
+                if (audio) {
+                    audio.pause();
+                    bttn_element.style.background = 'lightgray';
+                }
+
+                audio = new Audio(file_name);
+                filename = file_name;
+                audio.play();
+                bttn_element.style.background = 'orange';
+            } else {
+                
+                if (audio.paused ) {
+                    audio = new Audio(file_name);
+                    filename = file_name;
+                    audio.play();
+                    bttn_element.style.background = 'orange';
+                } else {
+                    audio.pause();
+                    bttn_element.style.background = 'lightgray';
+                }
+            }
+        }
+        function switchMode() {
+            if (document.getElementById("myonoffswitch").checked) {
+                mode = 0;
+            }
+            else {
+                mode = 1;
+            }
+        }
+    </script>
+
+<script>
+        /* Highlights the navigation bar button corresponding to page
+        to indicate which page a user is currently viewing.
+        */
+
+        var tasks="cond_cont";
+        var methods2names = {
+            'Prompts' : 'Prompt',
+            'Prompts-Resynthesized' : 'Prompt',
+            'GroundTruth' : 'Ground Truth',
+            'DLM4-cross_edge_duration_delayed' : 'DLM5 (dGSLM)',
+            'DLM3-cross_edge_duration' : 'DLM4',
+            'DLM2-cross_edge' : 'DLM3',
+            'DLM1-cross' : 'DLM2',
+            'DLM0' : 'DLM1',
+            'MS-TLM' : 'MS-TLM',
+        };
+        var methods = Object.keys(methods2names);
+        var root = 'https://dl.fbaipublicfiles.com/textless_nlp/dgslm/samples/stereo';
+        var prompt_file_list = [
+            'fe_03_11466_258s_268s',
+            'fe_03_11467_378s_388s',
+            'fe_03_11468_242s_252s',
+            'fe_03_11469_550s_560s',
+            'fe_03_11470_465s_475s',
+            'fe_03_11471_247s_257s',
+            'fe_03_11472_233s_243s',
+            'fe_03_11473_345s_355s',
+            'fe_03_11474_368s_378s',
+            'fe_03_11475_120s_130s',
+            'fe_03_11476_37s_47s',
+            'fe_03_11477_107s_117s',
+            'fe_03_11478_221s_231s',
+            'fe_03_11479_301s_311s',
+            'fe_03_11480_309s_319s',
+            'fe_03_11481_334s_344s',
+            'fe_03_11482_501s_511s',
+            'fe_03_11483_483s_493s',
+            'fe_03_11484_508s_518s',
+            'fe_03_11485_42s_52s',
+            'fe_03_11486_2s_12s',
+            'fe_03_11487_130s_140s',
+            'fe_03_11488_457s_467s',
+            'fe_03_11489_295s_305s',
+            'fe_03_11490_447s_457s',
+            'fe_03_11491_80s_90s',
+            'fe_03_11492_150s_160s',
+            'fe_03_11493_370s_380s',
+            'fe_03_11494_193s_203s',
+            'fe_03_11495_381s_391s',
+            'fe_03_11496_245s_255s',
+            'fe_03_11498_132s_142s',
+            'fe_03_11499_451s_461s',
+            'fe_03_11502_124s_134s',
+            'fe_03_11503_109s_119s',
+            'fe_03_11510_485s_495s',
+            'fe_03_11512_327s_337s',
+            'fe_03_11512_470s_480s',
+            'fe_03_11517_111s_121s',
+            'fe_03_11522_207s_217s',
+            'fe_03_11526_564s_574s',
+            'fe_03_11527_72s_82s',
+            'fe_03_11542_3s_13s',
+            'fe_03_11546_413s_423s',
+            'fe_03_11555_544s_554s',
+            'fe_03_11559_61s_71s',
+            'fe_03_11565_205s_215s',
+            'fe_03_11567_12s_22s',
+            'fe_03_11570_204s_214s',
+            'fe_03_11576_324s_334s',
+        ]
+        var sample_suffix = "_3" // The third continuation was chosen
+
+        function lock(){
+            $('#loading-status').show();
+            $('#tasks').attr('disabled', 'disabled');
+        }
+        function unlock(){
+            $('#loading-status').hide();
+            $('#tasks').removeAttr('disabled');
+        }
+
+        function preload(tasks){
+            lock();
+            $('#tasks').val(tasks);
+            $("#result-div").empty();
+            $("#result-div").append(createTable());
+            if (false) { //tasks === 'voice_conversion' || tasks === 'resynthesis') {
+                let footer = document.createElement('p');
+                footer.append('Additional information goes here.');
+                $("#result-div").append(footer);
+            }
+            unlock();
+        }
+
+        preload(tasks);
+        
+        
+        function createTable() {
+            var tableElem;
+            tableElem = document.createElement('table');
+
+            return buildContinuationTable(tableElem);
+        }
+
+        function buildContinuationTable(tableElem) {
+             var headline, colElem, rowElem;
+
+            // First row of the table
+            headline = document.createElement('tr');
+            headline.appendChild(document.createElement('td'));
+            methods.forEach((method) => {
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(methods2names[method]));
+                colElem.style.color = 'rgb(22, 38, 67)';
+                colElem.style.center = true;
+                // colElem.style.whiteSpace = 'pre';
+                headline.appendChild(colElem);
+            });
+            tableElem.appendChild(headline);
+
+            // Second row
+            headline = document.createElement('tr');
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('ID'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            headline.appendChild(colElem);
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('original speech'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            colElem.style.fontSize = "small";
+            colElem.style.fontWeight = "bold"
+            colElem.style.backgroundColor = 'rgb(184, 197, 219)';
+            headline.appendChild(colElem);
+            colElem = document.createElement('td');
+            colElem.appendChild(document.createTextNode('synthesized speech'));
+            colElem.style.color = 'rgb(22, 38, 67)';
+            colElem.style.center = true;
+            colElem.style.fontSize = "small";
+            colElem.style.fontWeight = "bold"
+            colElem.colSpan = methods.length-1;
+            colElem.style.backgroundColor = 'rgb(184, 197, 219)';
+            colElem.style.borderLeft = "solid"
+            colElem.style.borderLeftColor = "white"
+            headline.appendChild(colElem);
+            tableElem.appendChild(headline);
+
+            // Here comes the samples
+            var bg_color='white';
+            var txt_color='rgb(22, 38, 67)';
+            var N = prompt_file_list.length;
+            for (var j = 0; j < N; j++) {
+                rowElem = document.createElement('tr');
+                rowElem.style.backgroundColor = bg_color;
+
+                colElem = document.createElement('td');
+                colElem.appendChild(document.createTextNode(j.toString()));
+                colElem.style.color = txt_color;
+                colElem.style.center = true;
+                rowElem.appendChild(colElem);
+
+                for (var ii = 0; ii < methods.length; ii++) {
+                    colElem = document.createElement('td');
+                    var x = document.createElement("input");
+                    var button_id = "play-"+j.toString()+"-"+ii.toString();
+                    x.setAttribute("id", button_id);
+                    x.setAttribute("type", "button");
+                    x.setAttribute("value", "PLAY");
+                    var audio_path = root + "/" + methods[ii] + "/" + prompt_file_list[j] + sample_suffix + '.wav';
+                    // x.setAttribute("onclick", "play('" + audio_path + "')");
+                    x.setAttribute("onclick", "play2('" + audio_path + "','"+button_id+"')");
+                    colElem.appendChild(x);
+                    colElem.style.color = txt_color;
+                    colElem.style.center = true;
+                    rowElem.appendChild(colElem);
+                }
+
+                rowElem.style.borderBottom = "1px dotted grey"
+
+                tableElem.appendChild(rowElem);
+
+                if ((j+1) % 10 === 0) {
+                    flip = bg_color
+                    bg_color = txt_color;
+                    txt_color = flip;
+                }
+            }
+
+            return tableElem;
+        }
+
+        function fetch_result(){
+            $(window).ready(function() {
+                tasks=$("#tasks").val();
+                $("#result-div").empty();
+                $("#result-div").append(createTable());
+                if (false) { //tasks === 'voice_conversion' || tasks === 'resynthesis') {
+                    let footer = document.createElement('p');
+                    footer.append('* Additional 20 units used for pitch stream.');
+                    $("#result-div").append(footer);
+                }
+                unlock();
+            });
+            
+        }
+
+        function record(sel) {
+            lock();
+            fetch_result();
+        }
+
+        window.addEventListener('popstate', function(e) {
+            preload(e.state["tasks"]);
+        });
+
+
+
+        // var tasks="speech_cont";
+        // var dataset="librispeech";
+
+        // var methods = [
+        //     "prompts",
+        //     "oracle",
+        //     "method5",
+        //     "method1",
+        //     "method2",
+        //     "method4",
+        //     "method3",
+        // ];
+
+        // var method_to_hdr = {
+        //     "method1": "-Q-P" , /*no-quant, w/o prosody input */
+        //     "method2": "-Q+P", /* no-quant, w/ prosody input */
+        //     "method3": "+Q+P (proposed)",  /* quant, w/ prosody input (proposed) */
+        //     "method4": "+Q-P", /* quant, w/o prosody input */ 
+        //     "method5": "Resynth",
+        //     "oracle": "Original",
+        //     "prompt": "Prompt",
+        // };
+
+        // var task_to_hdr = {
+        //     "speech_cont": "Speech cont.",
+        //     "prosody_cont": "Prosody cont.",
+        // };
+      
+        // var root = 'https://dl.fbaipublicfiles.com/textless_nlp/pgslm/demo';
+
+        // function lock(){
+        //     $('#dataset').attr('disabled', 'disabled');
+        //     $('#tasks').attr('disabled', 'disabled');
+        //     $('#loading-status').show();
+        // }
+        // function unlock(){
+        //     $('#dataset').removeAttr('disabled');
+        //     $('#tasks').removeAttr('disabled');
+        //     $('#loading-status').hide();
+        // }
+
+        // function preload(dataset, tasks, push){
+        //     lock();
+        //     $('#tasks').val(tasks);
+        //     $("#result-div").empty();
+        //     $("#result-div").append(createTable());
+        //     if (false) { //tasks === 'voice_conversion' || tasks === 'resynthesis') {
+        //         let footer = document.createElement('p');
+        //         footer.append('* Additional 20 units used for pitch stream.');
+        //         $("#result-div").append(footer);
+        //     }
+        //     unlock();
+        // }
+
+        // preload(dataset, tasks, true);
+
+        // function createTable() {
+        //     var tableElem;
+        //     tableElem = document.createElement('table');
+
+        //     return buildContinuationTable(tableElem);
+        // }
+
+        // function buildContinuationTable(tableElem) {
+        //      var headline, colElem, rowElem;
+
+        //     headline = document.createElement('tr');
+
+        //     var names = ["", "Prompt", "Original", "Resynth"];
+        //     names.forEach((name) => {
+        //         colElem = document.createElement('td');
+        //         colElem.appendChild(document.createTextNode(name));
+        //         colElem.style.color = 'rgb(22, 38, 67)';
+        //         colElem.style.center = true;
+        //         headline.appendChild(colElem);
+        //     });
+
+        //     var names = ["Continuous prosody", "Quantized prosody"];
+        //     names.forEach((name) => {
+        //         colElem = document.createElement('td');
+        //         colElem.appendChild(document.createTextNode(name));
+        //         colElem.style.color = 'rgb(22, 38, 67)';
+        //         colElem.style.center = true;
+        //         colElem.colSpan = 2;
+        //         headline.appendChild(colElem);
+        //     });
+
+        //     tableElem.appendChild(headline);
+        //     headline = document.createElement('tr');
+        //     for (var _ = 0; _ < 4; ++_) {
+        //         colElem = document.createElement('td');
+        //         headline.appendChild(colElem);
+        //     }
+
+        //     for (var ii = 0; ii < 4; ++ii) {
+        //         var hasProsodyInput = (ii % 2) == 1;
+        //         var name = hasProsodyInput? "✅" : "❌";
+
+        //         colElem = document.createElement('td');
+        //         colElem.appendChild(document.createTextNode(name));
+        //         colElem.style.color = 'rgb(22, 38, 67)';
+        //         colElem.style.center = true;
+        //         headline.appendChild(colElem);
+        //     };
+
+            
+        //     /*
+        //     colElem = document.createElement('td');
+        //     colElem.appendChild(document.createTextNode('ID'));
+        //     colElem.style.color = 'rgb(22, 38, 67)';
+        //     colElem.style.center = true;
+        //     headline.appendChild(colElem);
+
+        //     colElem = document.createElement('td');
+        //     colElem.appendChild(document.createTextNode('Prompt'));
+        //     colElem.style.color = 'rgb(22, 38, 67)';
+        //     colElem.style.center = true;
+        //     headline.appendChild(colElem);
+
+        //     for (var ii = 0; ii < methods.length; ii++) {
+        //         colElem = document.createElement('td');
+        //         colElem.appendChild(document.createTextNode(method_to_hdr[methods[ii]]));
+        //         colElem.style.color = 'rgb(22, 38, 67)';
+        //         colElem.style.center = true;
+        //         colElem.style.whiteSpace = 'pre';
+        //         headline.appendChild(colElem);
+        //     }
+        //     */
+
+        //     tableElem.appendChild(headline);
+
+        //     var bg_color='white';
+        //     var txt_color='rgb(22, 38, 67)';
+
+        //     var N = 100;
+        //     for (var j = 0; j < N; j++) {
+        //         rowElem = document.createElement('tr');
+        //         rowElem.style.backgroundColor = bg_color;
+
+        //         colElem = document.createElement('td');
+        //         colElem.appendChild(document.createTextNode(j.toString()));
+        //         colElem.style.color = txt_color;
+        //         colElem.style.center = true;
+        //         rowElem.appendChild(colElem);
+
+        //         /*colElem = document.createElement('td');
+        //         colElem.appendChild(document.createTextNode(task_to_hdr[tasks]));
+        //         colElem.style.color = txt_color;
+        //         colElem.style.center = true;
+        //         rowElem.appendChild(colElem);*/
+
+        //         for (var ii = 0; ii < methods.length; ii++) {
+        //             colElem = document.createElement('td');
+        //             var x = document.createElement("input");
+        //             x.setAttribute("type", "button");
+        //             x.setAttribute("value", "PLAY");
+        //             var audio_path = root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + j.toString() + ".wav";
+        //             x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + j.toString() + ".wav')");
+        //             colElem.appendChild(x);
+        //             colElem.style.color = txt_color;
+        //             colElem.style.center = true;
+        //             rowElem.appendChild(colElem);
+        //         }
+
+        //         tableElem.appendChild(rowElem);
+
+        //         if ((j+1) % 10 === 0) {
+        //             flip = bg_color
+        //             bg_color = txt_color;
+        //             txt_color = flip;
+        //         }
+        //     }
+
+        //     return tableElem;
+        // }
+
+        // function fetch_result(){
+        //     $(window).ready(function() {
+        //         dataset=$("#dataset").val();
+        //         tasks=$("#tasks").val();
+        //         $("#result-div").empty();
+        //         /*if (dataset === 'librispeech') {
+        //             $("#tasks").empty();
+        //             $("#tasks").append('<option value="resynthesis">Resynthesis</option>');
+        //             $("#tasks").append('<option value="voice_conversion">Voice Conversion</option>');
+        //             $("#tasks").val(tasks);
+        //         } else {
+        //             $("#tasks").empty();
+        //             $("#tasks").append('<option value="resynthesis">Resynthesis</option>');
+        //             $("#tasks").append('<option value="voice_conversion">Voice Conversion</option>');
+        //             $("#tasks").append('<option value="codec">Codec (Unseen Speakers)</option>');
+        //             $("#tasks").val(tasks);
+        //         }
+        //         */
+
+        //         $("#result-div").append(createTable());
+        //         if (false) { //tasks === 'voice_conversion' || tasks === 'resynthesis') {
+        //             let footer = document.createElement('p');
+        //             footer.append('* Additional 20 units used for pitch stream.');
+        //             $("#result-div").append(footer);
+        //         }
+        //         unlock();
+        //     });
+            
+        // }
+
+        // function record(sel) {
+        //     lock();
+        //     fetch_result();
+        // }
+
+        // window.addEventListener('popstate', function(e) {
+        //     preload(e.state["dataset"], e.state["tasks"], false);
+        // });
+    </script>
+
+<div class="content-container">
+    Sample paged based on <a style="color:rgb(22, 38, 67)"  href="https://daps.cs.princeton.edu/projects/HiFi-GAN/index.php"> HiFi-GAN</a> page.  
+</div>
+</body>
+</html>
