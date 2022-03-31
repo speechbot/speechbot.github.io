@@ -12,8 +12,11 @@
     <div id="intro">
         <br>
       <p>
-      Tu Anh Nguyen, Eugene Kharitonov, Jade Copet, Yossi Adi, Wei-Ning Hsu, Ali Elkahky, <br> Paden Tomasello, Robin Algayres, 
-        Benoit Sagot, Abdelrahman Mohamed, Emmanuel Dupoux
+        Tu Anh Nguyen, Eugene Kharitonov, Jade Copet, Yossi Adi, Wei-Ning Hsu, Ali Elkahky, <br> 
+        Paden Tomasello, Robin Algayres, Benoit Sagot, Abdelrahman Mohamed, Emmanuel Dupoux
+        </p>
+        <p>
+            [<a href="https://arxiv.org/pdf/2203.16502.pdf", target='_blank'>Paper</a>]
         </p>
     </div>
 </div>
@@ -41,9 +44,11 @@
         a system attending to both unit streams with the help of cross-attention.
         The DLM model then generates new pseudo-text and feed them to the decoder to produce a new waveform. 
         The entire pipeline is trained without supervision or
-    text.</i><br>Below are samples from our best model,
+    text.</i></p> 
+    <p>Below are samples from our best model,
     compared to the ground truth. Note that the synthesized speakers are different from the original ones, 
-    but we deliberately choose the speakers with the same gender as in original speech.</p>   
+    but we deliberately choose the speakers with the same gender as in original speech.<br>
+    You will hear a <b>ding</b> sound at the end of the prompt duration.</p>   
     <table border = "1" class="inlineTable" id="Table1">
         <col width="30">
         <col width="300">
@@ -66,8 +71,8 @@
         <tr>
             <th>0</th>
             <td>
-                <div id="prompts_1_header_waveform"></div>
-                <button id="prompts_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_prompts_1.playPause()">
+                <div id="cell_11_header_waveform"></div>
+                <button id="cell_11_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_cell_11.playPause()">
                     <i class="fa fa-play"></i>
                     Play
                     /
@@ -75,19 +80,19 @@
                     Pause
                 </button>
                 <script>
-                    var wavesurfer_prompts_1 = WaveSurfer.create({
-                                container: '#prompts_1_header_waveform',
+                    var wavesurfer_cell_11 = WaveSurfer.create({
+                                container: '#cell_11_header_waveform',
                                 waveColor: 'violet',
                                 progressColor: 'purple',
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_prompts_1.load('./audio/stereo/Prompts-Original/fe_03_11522_1s_5s.wav');
+                    wavesurfer_cell_11.load('./audio/stereo/Prompts-Original/fe_03_11522_1s_5s.wav');
                 </script>
            </td>
             <td>
-                <div id="logmel_1_header_waveform"></div>
-                <button id="logmel_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_logmel_1.playPause()">
+                <div id="cell_12_header_waveform"></div>
+                <button id="cell_12_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_cell_12.playPause()">
                     <i class="fa fa-play"></i>
                     Play
                     /
@@ -95,19 +100,19 @@
                     Pause
                 </button>
                 <script>
-                    var wavesurfer_logmel_1 = WaveSurfer.create({
-                                container: '#logmel_1_header_waveform',
+                    var wavesurfer_cell_12 = WaveSurfer.create({
+                                container: '#cell_12_header_waveform',
                                 waveColor: 'violet',
                                 progressColor: 'purple',
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_logmel_1.load('./audio/stereo/GroundTruth-Resynthesized/fe_03_11522_1s_5s.wav');
+                    wavesurfer_cell_12.load('./audio/stereo/GroundTruth-Resynthesized/fe_03_11522_1s_5s.wav');
                 </script>
            </td>
             <td>
-                <div id="hubert_1_header_waveform"></div>
-                <button id="hubert_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_hubert_1.playPause()">
+                <div id="cell_13_header_waveform"></div>
+                <button id="cell_13_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_cell_13.playPause()">
                     <i class="fa fa-play"></i>
                     Play
                     /
@@ -115,19 +120,19 @@
                     Pause
                 </button>
                 <script>
-                    var wavesurfer_hubert_1 = WaveSurfer.create({
-                                container: '#hubert_1_header_waveform',
+                    var wavesurfer_cell_13 = WaveSurfer.create({
+                                container: '#cell_13_header_waveform',
                                 waveColor: 'violet',
                                 progressColor: 'purple',
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_hubert_1.load('./audio/stereo/dGSLM/fe_03_11522_1s_5s_CONTINUATION3.wav');
+                    wavesurfer_cell_13.load('./audio/stereo/dGSLM/fe_03_11522_1s_5s_CONTINUATION3.wav');
                 </script>
            </td>
             <td>
-                <div id="asr_1_header_waveform"></div>
-                <button id="asr_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_asr_1.playPause()">
+                <div id="cell_14_header_waveform"></div>
+                <button id="cell_14_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_cell_14.playPause()">
                     <i class="fa fa-play"></i>
                     Play
                     /
@@ -135,22 +140,22 @@
                     Pause
                 </button>
                 <script>
-                    var wavesurfer_asr_1 = WaveSurfer.create({
-                                container: '#asr_1_header_waveform',
+                    var wavesurfer_cell_14 = WaveSurfer.create({
+                                container: '#cell_14_header_waveform',
                                 waveColor: 'violet',
                                 progressColor: 'purple',
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_asr_1.load('./audio/stereo/dGSLM/fe_03_11522_1s_5s_CONTINUATION2.wav');
+                    wavesurfer_cell_14.load('./audio/stereo/dGSLM/fe_03_11522_1s_5s_CONTINUATION2.wav');
                 </script>
            </td>
         </tr>
         <tr>
             <th>1</th>
             <td>
-                <div id="prompts_2_header_waveform"></div>
-                <button id="prompts_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_prompts_2.playPause()">
+                <div id="cell_21_header_waveform"></div>
+                <button id="cell_21_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_cell_21.playPause()">
                     <i class="fa fa-play"></i>
                     Play
                     /
@@ -158,19 +163,19 @@
                     Pause
                 </button>
                 <script>
-                    var wavesurfer_prompts_2 = WaveSurfer.create({
-                                container: '#prompts_2_header_waveform',
+                    var wavesurfer_cell_21 = WaveSurfer.create({
+                                container: '#cell_21_header_waveform',
                                 waveColor: 'violet',
                                 progressColor: 'purple',
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_prompts_2.load('./audio/stereo/Prompts-Original/fe_03_11501_63s_73s.wav');
+                    wavesurfer_cell_21.load('./audio/stereo/Prompts-Original/fe_03_11501_63s_73s.wav');
                 </script>
            </td>
             <td>
-                <div id="logmel_2_header_waveform"></div>
-                <button id="logmel_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_logmel_2.playPause()">
+                <div id="cell_22_header_waveform"></div>
+                <button id="cell_22_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_cell_22.playPause()">
                     <i class="fa fa-play"></i>
                     Play
                     /
@@ -178,19 +183,19 @@
                     Pause
                 </button>
                 <script>
-                    var wavesurfer_logmel_2 = WaveSurfer.create({
-                                container: '#logmel_2_header_waveform',
+                    var wavesurfer_cell_22 = WaveSurfer.create({
+                                container: '#cell_22_header_waveform',
                                 waveColor: 'violet',
                                 progressColor: 'purple',
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_logmel_2.load('./audio/stereo/GroundTruth-Resynthesized/fe_03_11501_63s_73s.wav');
+                    wavesurfer_cell_22.load('./audio/stereo/GroundTruth-Resynthesized/fe_03_11501_63s_73s.wav');
                 </script>
            </td>
             <td>
-                <div id="hubert_2_header_waveform"></div>
-                <button id="hubert_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_hubert_2.playPause()">
+                <div id="cell_23_header_waveform"></div>
+                <button id="cell_23_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_cell_23.playPause()">
                     <i class="fa fa-play"></i>
                     Play
                     /
@@ -198,19 +203,19 @@
                     Pause
                 </button>
                 <script>
-                    var wavesurfer_hubert_2 = WaveSurfer.create({
-                                container: '#hubert_2_header_waveform',
+                    var wavesurfer_cell_23 = WaveSurfer.create({
+                                container: '#cell_23_header_waveform',
                                 waveColor: 'violet',
                                 progressColor: 'purple',
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_hubert_2.load('./audio/stereo/dGSLM/fe_03_11501_63s_73s.wav');
+                    wavesurfer_cell_23.load('./audio/stereo/dGSLM/fe_03_11501_63s_73s.wav');
                 </script>
            </td>
             <td>
-                <div id="asr_2_header_waveform"></div>
-                <button id="asr_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_asr_2.playPause()">
+                <div id="cell_24_header_waveform"></div>
+                <button id="cell_24_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_cell_24.playPause()">
                     <i class="fa fa-play"></i>
                     Play
                     /
@@ -218,14 +223,14 @@
                     Pause
                 </button>
                 <script>
-                    var wavesurfer_asr_2 = WaveSurfer.create({
-                                container: '#asr_2_header_waveform',
+                    var wavesurfer_cell_24 = WaveSurfer.create({
+                                container: '#cell_24_header_waveform',
                                 waveColor: 'violet',
                                 progressColor: 'purple',
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_asr_2.load('./audio/stereo/dGSLM/fe_03_11501_63s_73s_CONTINUATION1.wav');
+                    wavesurfer_cell_24.load('./audio/stereo/dGSLM/fe_03_11501_63s_73s_CONTINUATION1.wav');
                 </script>
            </td>
         </tr>
@@ -284,27 +289,8 @@
         More conditional samples are provided below, with all the language models studied in the paper.  <br>
         The specifications of all models are listed below<br>
         <img src="figure2.PNG" style="width:60%">
-        You will hear a <b>ding</b> sound at the end of the prompt duration.
+        You will also hear a <b>ding</b> sound at the end of the prompt duration.
     </div>
-    <!-- <div class="option-div">
-    <label for="dataset">Choose a dataset:</label>
-    <select id="dataset" onchange=record(this)>
-        <option value=librispeech>LibriSpeech</option>
-        <option value=blizzard>Blizzard</option>
-    </select></div>
-    <div class="option-div" id="tasks-div">
-        <label for="tasks">Choose task:</label>
-        <select id="tasks" onchange=record(this)>
-            <option value="speech_cont">Speech continuation</option>
-            <option value="prosody_cont">Prosody continuation</option>
-        </select>
-    </div>
-    <div id='legend'>
-      <ul style="list-style-type:none;font-size:80%">
-	<li>✅: model has prosody (unit duration and F0) as a part of its input</li>
-	<li>❌: model has no prosody in its input</li>
-        </ul>    
-    </div> -->
     <div id="result-div"></div>
     
     </div>
@@ -587,221 +573,6 @@
         });
 
 
-
-        // var tasks="speech_cont";
-        // var dataset="librispeech";
-
-        // var methods = [
-        //     "prompts",
-        //     "oracle",
-        //     "method5",
-        //     "method1",
-        //     "method2",
-        //     "method4",
-        //     "method3",
-        // ];
-
-        // var method_to_hdr = {
-        //     "method1": "-Q-P" , /*no-quant, w/o prosody input */
-        //     "method2": "-Q+P", /* no-quant, w/ prosody input */
-        //     "method3": "+Q+P (proposed)",  /* quant, w/ prosody input (proposed) */
-        //     "method4": "+Q-P", /* quant, w/o prosody input */ 
-        //     "method5": "Resynth",
-        //     "oracle": "Original",
-        //     "prompt": "Prompt",
-        // };
-
-        // var task_to_hdr = {
-        //     "speech_cont": "Speech cont.",
-        //     "prosody_cont": "Prosody cont.",
-        // };
-      
-        // var root = 'https://dl.fbaipublicfiles.com/textless_nlp/pgslm/demo';
-
-        // function lock(){
-        //     $('#dataset').attr('disabled', 'disabled');
-        //     $('#tasks').attr('disabled', 'disabled');
-        //     $('#loading-status').show();
-        // }
-        // function unlock(){
-        //     $('#dataset').removeAttr('disabled');
-        //     $('#tasks').removeAttr('disabled');
-        //     $('#loading-status').hide();
-        // }
-
-        // function preload(dataset, tasks, push){
-        //     lock();
-        //     $('#tasks').val(tasks);
-        //     $("#result-div").empty();
-        //     $("#result-div").append(createTable());
-        //     if (false) { //tasks === 'voice_conversion' || tasks === 'resynthesis') {
-        //         let footer = document.createElement('p');
-        //         footer.append('* Additional 20 units used for pitch stream.');
-        //         $("#result-div").append(footer);
-        //     }
-        //     unlock();
-        // }
-
-        // preload(dataset, tasks, true);
-
-        // function createTable() {
-        //     var tableElem;
-        //     tableElem = document.createElement('table');
-
-        //     return buildContinuationTable(tableElem);
-        // }
-
-        // function buildContinuationTable(tableElem) {
-        //      var headline, colElem, rowElem;
-
-        //     headline = document.createElement('tr');
-
-        //     var names = ["", "Prompt", "Original", "Resynth"];
-        //     names.forEach((name) => {
-        //         colElem = document.createElement('td');
-        //         colElem.appendChild(document.createTextNode(name));
-        //         colElem.style.color = 'rgb(22, 38, 67)';
-        //         colElem.style.center = true;
-        //         headline.appendChild(colElem);
-        //     });
-
-        //     var names = ["Continuous prosody", "Quantized prosody"];
-        //     names.forEach((name) => {
-        //         colElem = document.createElement('td');
-        //         colElem.appendChild(document.createTextNode(name));
-        //         colElem.style.color = 'rgb(22, 38, 67)';
-        //         colElem.style.center = true;
-        //         colElem.colSpan = 2;
-        //         headline.appendChild(colElem);
-        //     });
-
-        //     tableElem.appendChild(headline);
-        //     headline = document.createElement('tr');
-        //     for (var _ = 0; _ < 4; ++_) {
-        //         colElem = document.createElement('td');
-        //         headline.appendChild(colElem);
-        //     }
-
-        //     for (var ii = 0; ii < 4; ++ii) {
-        //         var hasProsodyInput = (ii % 2) == 1;
-        //         var name = hasProsodyInput? "✅" : "❌";
-
-        //         colElem = document.createElement('td');
-        //         colElem.appendChild(document.createTextNode(name));
-        //         colElem.style.color = 'rgb(22, 38, 67)';
-        //         colElem.style.center = true;
-        //         headline.appendChild(colElem);
-        //     };
-
-            
-        //     /*
-        //     colElem = document.createElement('td');
-        //     colElem.appendChild(document.createTextNode('ID'));
-        //     colElem.style.color = 'rgb(22, 38, 67)';
-        //     colElem.style.center = true;
-        //     headline.appendChild(colElem);
-
-        //     colElem = document.createElement('td');
-        //     colElem.appendChild(document.createTextNode('Prompt'));
-        //     colElem.style.color = 'rgb(22, 38, 67)';
-        //     colElem.style.center = true;
-        //     headline.appendChild(colElem);
-
-        //     for (var ii = 0; ii < methods.length; ii++) {
-        //         colElem = document.createElement('td');
-        //         colElem.appendChild(document.createTextNode(method_to_hdr[methods[ii]]));
-        //         colElem.style.color = 'rgb(22, 38, 67)';
-        //         colElem.style.center = true;
-        //         colElem.style.whiteSpace = 'pre';
-        //         headline.appendChild(colElem);
-        //     }
-        //     */
-
-        //     tableElem.appendChild(headline);
-
-        //     var bg_color='white';
-        //     var txt_color='rgb(22, 38, 67)';
-
-        //     var N = 100;
-        //     for (var j = 0; j < N; j++) {
-        //         rowElem = document.createElement('tr');
-        //         rowElem.style.backgroundColor = bg_color;
-
-        //         colElem = document.createElement('td');
-        //         colElem.appendChild(document.createTextNode(j.toString()));
-        //         colElem.style.color = txt_color;
-        //         colElem.style.center = true;
-        //         rowElem.appendChild(colElem);
-
-        //         /*colElem = document.createElement('td');
-        //         colElem.appendChild(document.createTextNode(task_to_hdr[tasks]));
-        //         colElem.style.color = txt_color;
-        //         colElem.style.center = true;
-        //         rowElem.appendChild(colElem);*/
-
-        //         for (var ii = 0; ii < methods.length; ii++) {
-        //             colElem = document.createElement('td');
-        //             var x = document.createElement("input");
-        //             x.setAttribute("type", "button");
-        //             x.setAttribute("value", "PLAY");
-        //             var audio_path = root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + j.toString() + ".wav";
-        //             x.setAttribute("onclick", "play('" + root + "/" + tasks + "/" + dataset + "/" + methods[ii] + "/" + j.toString() + ".wav')");
-        //             colElem.appendChild(x);
-        //             colElem.style.color = txt_color;
-        //             colElem.style.center = true;
-        //             rowElem.appendChild(colElem);
-        //         }
-
-        //         tableElem.appendChild(rowElem);
-
-        //         if ((j+1) % 10 === 0) {
-        //             flip = bg_color
-        //             bg_color = txt_color;
-        //             txt_color = flip;
-        //         }
-        //     }
-
-        //     return tableElem;
-        // }
-
-        // function fetch_result(){
-        //     $(window).ready(function() {
-        //         dataset=$("#dataset").val();
-        //         tasks=$("#tasks").val();
-        //         $("#result-div").empty();
-        //         /*if (dataset === 'librispeech') {
-        //             $("#tasks").empty();
-        //             $("#tasks").append('<option value="resynthesis">Resynthesis</option>');
-        //             $("#tasks").append('<option value="voice_conversion">Voice Conversion</option>');
-        //             $("#tasks").val(tasks);
-        //         } else {
-        //             $("#tasks").empty();
-        //             $("#tasks").append('<option value="resynthesis">Resynthesis</option>');
-        //             $("#tasks").append('<option value="voice_conversion">Voice Conversion</option>');
-        //             $("#tasks").append('<option value="codec">Codec (Unseen Speakers)</option>');
-        //             $("#tasks").val(tasks);
-        //         }
-        //         */
-
-        //         $("#result-div").append(createTable());
-        //         if (false) { //tasks === 'voice_conversion' || tasks === 'resynthesis') {
-        //             let footer = document.createElement('p');
-        //             footer.append('* Additional 20 units used for pitch stream.');
-        //             $("#result-div").append(footer);
-        //         }
-        //         unlock();
-        //     });
-            
-        // }
-
-        // function record(sel) {
-        //     lock();
-        //     fetch_result();
-        // }
-
-        // window.addEventListener('popstate', function(e) {
-        //     preload(e.state["dataset"], e.state["tasks"], false);
-        // });
     </script>
 
 <div class="content-container">
