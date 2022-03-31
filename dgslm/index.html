@@ -12,9 +12,9 @@
     <div id="intro">
         <br>
       <p>
-      Tu Anh Nguyen, Eugene Kharitonov, Jade Copet, Yossi Adi,  
-      Wei-Ning Hsu, Ali Elkahky, Paden Tomasello,<br> 
-      Robin Algayres, Benoit Sagot, Abdelrahman Mohamed, Emmanuel Dupoux
+        Tu Anh Nguyen, Eugene Kharitonov, Jade Copet, Yossi Adi, 
+        Wei-Ning Hsu, Ali Elkahky, Paden Tomasello, Robin Algayres, 
+        Benoit Sagot, Abdelrahman Mohamed, Emmanuel Dupoux
         </p>
     </div>
 </div>
@@ -26,6 +26,7 @@
         cross-attention trained on 2000 hours of two-channel raw conversational audio (Fisher dataset) without any text or 
         labels. It is able to generate speech, laughter and other paralinguistic signals in the two channels simultaneously 
         and reproduces naturalistic turn taking.
+  </br>
   </br>
     </p>
     <br/>
@@ -57,9 +58,9 @@
         </tr>
         <tr>
             <td>Prompt</td>
-            <td>Prompt</td>
             <td>Ground Truth</td>
-            <td>dGSLM</td>
+            <td>dGSLM (Continuation 1)</td>
+            <td>dGSLM (Continuation 2)</td>
         </tr>
         
         
@@ -82,7 +83,7 @@
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_prompts_1.load('./audio/stereo/Prompts-Original/fe_03_11555_0s_10s.wav');
+                    wavesurfer_prompts_1.load('./audio/stereo/Prompts-Original/fe_03_11522_1s_5s.wav');
                 </script>
            </td>
             <td>
@@ -102,7 +103,7 @@
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_logmel_1.load('./audio/stereo/Prompts-Resynthesized/fe_03_11555_0s_10s.wav');
+                    wavesurfer_logmel_1.load('./audio/stereo/GroundTruth-Resynthesized/fe_03_11522_1s_5s.wav');
                 </script>
            </td>
             <td>
@@ -122,7 +123,7 @@
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_hubert_1.load('./audio/stereo/GroundTruth-Resynthesized/fe_03_11555_0s_10s.wav');
+                    wavesurfer_hubert_1.load('./audio/stereo/dGSLM/fe_03_11522_1s_5s_CONTINUATION3.wav');
                 </script>
            </td>
             <td>
@@ -142,7 +143,7 @@
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_asr_1.load('./audio/stereo/dGSLM/fe_03_11555_0s_10s.wav');
+                    wavesurfer_asr_1.load('./audio/stereo/dGSLM/fe_03_11522_1s_5s_CONTINUATION2.wav');
                 </script>
            </td>
         </tr>
@@ -185,7 +186,7 @@
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_logmel_2.load('./audio/stereo/Prompts-Resynthesized/fe_03_11501_63s_73s.wav');
+                    wavesurfer_logmel_2.load('./audio/stereo/GroundTruth-Resynthesized/fe_03_11501_63s_73s.wav');
                 </script>
            </td>
             <td>
@@ -205,7 +206,7 @@
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_hubert_2.load('./audio/stereo/GroundTruth-Resynthesized/fe_03_11501_63s_73s.wav');
+                    wavesurfer_hubert_2.load('./audio/stereo/dGSLM/fe_03_11501_63s_73s.wav');
                 </script>
            </td>
             <td>
@@ -225,7 +226,7 @@
                                 splitChannels: true,
                                 responsive: true,
                             });
-                    wavesurfer_asr_2.load('./audio/stereo/dGSLM/fe_03_11501_63s_73s.wav');
+                    wavesurfer_asr_2.load('./audio/stereo/dGSLM/fe_03_11501_63s_73s_CONTINUATION1.wav');
                 </script>
            </td>
         </tr>
@@ -237,7 +238,7 @@
 <div class="content-title">Unconditional Examples</div>
 <p><i>In unconditional generation, two parallel streams of pseudo-text are sampled from the 
     DLM and synthetized into a waveform. </i></p>
-    <p><b>Generation 1 </b></p>
+    <p><b>Generation 1 (dGSLM)</b></p>
     <div id="uncond_1_header_waveform"></div>
     <button id="uncond_1_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_uncond_1.playPause()">
         <i class="fa fa-play"></i>
@@ -257,7 +258,7 @@
                 wavesurfer_uncond_1.load('./audio/uncond_generation/Generation_1.wav');
     </script>
 
-<p><b>Generation 2 </b></p>
+<p><b>Generation 2 (dGSLM)</b></p>
     <div id="uncond_2_header_waveform"></div>
     <button id="uncond_2_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_uncond_2.playPause()">
         <i class="fa fa-play"></i>
@@ -283,8 +284,8 @@
     <div id='task-description' style="margin-bottom: 1cm;">
         More conditional samples are provided below, with all the language models studied in the paper.  <br>
         The specifications of all models are listed below<br>
-        <img src="figure2.PNG" style="width:60%"> 
-        You will also hear a <b>ding</b> sound at the end of the prompt duration.
+        <img src="figure2.PNG" style="width:60%">
+        You will hear a <b>ding</b> sound at the end of the prompt duration.
     </div>
     <!-- <div class="option-div">
     <label for="dataset">Choose a dataset:</label>
@@ -377,7 +378,7 @@
         var tasks="cond_cont";
         var methods2names = {
             'Prompts' : 'Prompt',
-            'Prompts-Resynthesized' : 'Prompt',
+            // 'Prompts-Resynthesized' : 'Prompt',
             'GroundTruth' : 'Ground Truth',
             'DLM4-cross_edge_duration_delayed' : 'DLM5 (dGSLM)',
             'DLM3-cross_edge_duration' : 'DLM4',
