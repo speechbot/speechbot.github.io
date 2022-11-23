@@ -15,8 +15,13 @@
         Tu Anh Nguyen, Eugene Kharitonov, Jade Copet, Yossi Adi, Wei-Ning Hsu, Ali Elkahky, <br> 
         Paden Tomasello, Robin Algayres, Benoit Sagot, Abdelrahman Mohamed, Emmanuel Dupoux
         </p>
+        <p>In <i>Transactions of the Association for Computational Linguistics</i></p>
+        
         <p>
-            [<a href="https://arxiv.org/pdf/2203.16502.pdf", target='_blank'>Paper</a>]
+            [<a href="https://arxiv.org/pdf/2203.16502.pdf", target='_blank'>Paper</a>] 
+            [<a href="https://github.com/facebookresearch/fairseq/tree/main/examples/textless_nlp/dgslm", target='_blank'>Code</a>]
+            [<a href="https://ai.facebook.com/blog/generating-chit-chat-including-laughs-yawns-ums-and-other-nonverbal-cues-from-raw-audio", target='_blank'>Blog</a>]
+            
         </p>
     </div>
 </div>
@@ -26,8 +31,8 @@
         We introduce dGSLM, the first "textless" model able to generate audio samples of naturalistic spoken dialogues.  
         It uses recent work on unsupervised spoken unit discovery coupled with a dual-tower transformer architecture with 
         cross-attention trained on 2000 hours of two-channel raw conversational audio (Fisher dataset) without any text or 
-        labels. It is able to generate speech, laughter and other paralinguistic signals in the two channels simultaneously 
-        and reproduces naturalistic turn taking.
+        labels. We show that our model is able to generate speech, laughter and other paralinguistic signals in the two 
+        channels simultaneously and reproduces more naturalistic and fluid turn taking compared to a text-based cascaded model.
   </br>
   </br>
     </p>
@@ -45,8 +50,8 @@
         The DLM model then generates new pseudo-text and feed them to the decoder to produce a new waveform. 
         The entire pipeline is trained without supervision or
     text.</i></p> 
-    <p>Below are samples from our best model,
-    compared to the ground truth. Note that the synthesized speakers are different from the original ones, 
+    <p>Below are generation samples from <b><i>our best model</i></b>,
+    compared to the <b><i>ground truth</i></b> continuation and from a <b><i>cascaded model (ASR+text-LM+TTS)</i></b>. Note that the synthesized speakers are different from the original ones, 
     but we deliberately choose the speakers with the same gender as in original speech.<br>
     You will hear a <b>ding</b> sound at the end of the prompt duration.</p>   
     <table border = "1" class="inlineTable" id="Table1">
@@ -55,16 +60,18 @@
         <col width="300">
         <col width="300">
         <col width="300">
+        <col width="300">
         <tr>
             <td rowspan="2">ID</td>
             <td><b><small>original speech</small></b></td>
-            <td colspan="3"><b><small>synthesized speech</small></b></td>
+            <td colspan="4"><b><small>synthesized speech continuation</small></b></td>
         </tr>
         <tr>
             <td>Prompt</td>
             <td>Ground Truth</td>
             <td>dGSLM (Continuation 1)</td>
             <td>dGSLM (Continuation 2)</td>
+            <td>Cascaded Continuation</td>
         </tr>
         
         
@@ -150,6 +157,26 @@
                     wavesurfer_cell_14.load('./audio/stereo/dGSLM/fe_03_11522_1s_5s_CONTINUATION2.wav');
                 </script>
            </td>
+           <td>
+            <div id="cell_15_header_waveform"></div>
+            <button id="cell_15_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_cell_15.playPause()">
+                <i class="fa fa-play"></i>
+                Play
+                /
+                <i class="fa fa-pause"></i>
+                Pause
+            </button>
+            <script>
+                var wavesurfer_cell_15 = WaveSurfer.create({
+                            container: '#cell_15_header_waveform',
+                            waveColor: 'violet',
+                            progressColor: 'purple',
+                            splitChannels: true,
+                            responsive: true,
+                        });
+                wavesurfer_cell_15.load('./audio/stereo/LM-BPE/fe_03_11522_1s_5s_gttsapi_gen_truncated_30.0s.wav');
+            </script>
+       </td>
         </tr>
         <tr>
             <th>1</th>
@@ -233,6 +260,26 @@
                     wavesurfer_cell_24.load('./audio/stereo/dGSLM/fe_03_11501_63s_73s_CONTINUATION1.wav');
                 </script>
            </td>
+           <td>
+            <div id="cell_25_header_waveform"></div>
+            <button id="cell_25_header" class="play-button-demo btn btn-primary" onclick="wavesurfer_cell_25.playPause()">
+                <i class="fa fa-play"></i>
+                Play
+                /
+                <i class="fa fa-pause"></i>
+                Pause
+            </button>
+            <script>
+                var wavesurfer_cell_25 = WaveSurfer.create({
+                            container: '#cell_25_header_waveform',
+                            waveColor: 'violet',
+                            progressColor: 'purple',
+                            splitChannels: true,
+                            responsive: true,
+                        });
+                wavesurfer_cell_25.load('./audio/stereo/LM-BPE/fe_03_11501_63s_73s_gttsapi_gen_truncated_30.0s.wav');
+            </script>
+       </td>
         </tr>
     </table>
 </div>
@@ -371,6 +418,7 @@
             'DLM1-cross' : 'DLM2',
             'DLM0' : 'DLM1',
             'MS-TLM' : 'MS-TLM',
+            'LM-BPE' : 'Cascaded',
         };
         var methods = Object.keys(methods2names);
         var root = 'https://dl.fbaipublicfiles.com/textless_nlp/dgslm/samples/stereo';
