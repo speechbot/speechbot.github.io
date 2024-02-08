@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /*Define color palette: https://mycolor.space/gradient
+        background-image: linear-gradient(to right, #896500, #a57f29, #c29a49, #deb669, #fbd389);
+        background-image: linear-gradient(to right, #362802, #624e23, #927843, #c5a465, #fbd389);
+        background-image: linear-gradient(to right, #000000, #180508, #250a0a, #310d07, #3d0f00);
+        # gray
+        background-image: linear-gradient(to right, #000000, #353535, #696969, #a1a1a1, #dedede);
+        # brown
+        background-image: linear-gradient(to right, #392200, #492c03, #593603, #6a4003, #7c4a00);
+        */
+        :root {
+            --c0: #392200;
+            --c1: #492c03;
+            --c2: #593603;
+            --c3: #7c4a00;
+            --c4: #dedede;
+        }
+
+
+
+        td {
+            vertical-align: middle;
+        }
+        audio {
+            width: 20vw;
+            min-width: 100px;
+            max-width: 250px;
+          }
+        .float-div {
+            box-shadow: 0 0.5rem 1rem var(--c4);
+            padding : 3rem;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            border-radius: 0.5rem;
+            background: white;
+        }
+        body {
+            color: var(--c0);
+            /* background-image: linear-gradient(to bottom, #ffffff, #fffbfe, #fff7f8, #fff5ef, #fdf4e5); */
+            background-image: linear-gradient(to top, #ffffff, #fffbfe, #fff7f8, #fff5ef, #fdf4e5);
+        }
+        h1 {color: var(--c1);}
+        h2 {color: var(--c2);}
+        h3 {color: var(--c3);}
+        #small-caps {
+          font-variant-caps: small-caps;
+        }
+        p {text-align: justify;}
+    </style>
+    </head>
+
+    <div class="container float-div">
+        <div class="text-center">
+        <h1 id="small-caps">&#128293;SpiRit-LM</h1>
+        <h3>Interleaved Spoken and Written Language Model</h3>
+        <h6 style="color: var(--c1)">
+            [<a href="#", target='_blank'>Paper</a>]
+
+        </h6>
+        </div>
+
+        <p style="text-align: center; font-style: italic;">
+            Tu Anh Nguyen<sup>a,1,2</sup>, Benjamin Muller<sup>a,1</sup>, Bokai Yu<sup>a,1</sup>, <br>
+            Marta R. Costa-jussa<sup>b,1</sup>, Maha Elbayad<sup>b,1</sup>, Sravya Popuri<sup>b,1</sup>, <br>
+            Paul-Ambroise Duquenne<sup>b,1</sup>, Robin Algayres<sup>b,3</sup>, Ruslan Mavlyutov<sup>b,1</sup>, Itai Gat<sup>b,1</sup>, <br>
+            Gabriel Synnaeve<sup>c,1</sup>, Juan Pino<sup>c,1</sup>, Benoît Sagot<sup>c,2</sup>, Emmanuel Dupoux<sup>c,1,3</sup> <br>
+        </p>
+        <p style="text-align: center; font-weight: bold;">
+            <sup>1</sup>Meta AI, &nbsp; <sup>2</sup>Inria, Paris, &nbsp; <sup>3</sup>EHESS, ENS-PSL, CNRS, Paris
+        </p>
+        <p style="text-align: center;">
+            <tt>{ntuanh, benjaminmuller, bokai, dpx}@meta.com</tt>
+        </p>
+        <p style="text-align: center; font-style: italic;">
+            <sup>a,b,c</sup>Equally contributed as co-first, co-second and co-last authors, resp.
+        </p>
+        <br>
+        <p>
+            We introduce <a id="small-caps">SpiRit-LM</a>, a foundation multimodal language model
+            that freely mixes text and speech. Our model is based on a pretrained text language
+            model that we extend to the speech modality by continuously training it on text and
+            speech units. Speech and text sequences are concatenated as a single set of tokens,
+            and trained with a word-level interleaving method using a small automatically-curated
+            speech-text parallel corpus. <a id="small-caps">SpiRit-LM</a> comes in two versions:
+            a <a id="small-caps">Base</a> version that uses speech semantic units and an
+            <a id="small-caps">Expressive</a> version that models expressivity using pitch and
+            style units in addition to the semantic units. For both versions, the text is encoded
+            with subword BPE tokens. The resulting model displays both the semantic abilities of
+            text models and the expressive abilities of speech models. Additionally, we demonstrate
+            that <a id="small-caps">SpiRit-LM</a> is able to learn new tasks in a few-shot fashion
+            across modalities (i.e. ASR, TTS, Speech Classification).
+        </p>
+    </div>
+
+    <div class="container float-div">
+        <div class="text-center">
+            <h2><a id="small-caps">SpiRit-LM</a> Model Overview </h2>
+            <img src="spirit_overview.JPG" style="width:80%">
+        </div>
+    </div>
+
+    <div class="container float-div">
+        <div class="text-center">
+        <h2>Generation samples from  <a id="small-caps">SpiRit-LM-Base</a> </h2>
+        </div>
+        <br>
+        <p>
+            We prompt the model with either Text or Speech, and generate with either the same or different modality.
+
+            We give the model with a tag <code>[Text]</code> or <code>[Speech]</code> to signal a change of modality.
+            The (cherry picked) samples illustrate the capacity
+        of the model to continue a prompt in a semantically coherent
+        fashion across modalities.
+        </p>
+        <div class="table-responsive pt-3">
+            <table style="text-align: center" class="table table-hover">
+              <thead>
+                <tr>
+                  <th style="text-align: center">Prompt</th>
+                  <th style="text-align: center">Continuation</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <tr>
+                    <td>one two three four five</td>
+                    <td><audio controls controlslist="nodownload" src='audio/interleaving_base_175k/one_two_three_four_five_cont_speech.wav'></audio></td>
+                </tr>
+
+                <tr>
+                  <td><audio controls controlslist="nodownload" src='audio/interleaving_base_175k/a_b_c_d_e_prompt_orin.wav'></audio></td>
+                  <td>
+                      <p>
+                           f g h i j k l m n o p q r s t u v w x y z why don't we go back to the beginning and start all over again? Hello and welcome back to the improve your English podcast. This is episode 39 and I'm Jack from Jack Sullivan english.com and I'm Luke from Luke's English.com. And if you want to improve your English, then this is the right podcast for you because you're learning new vocabulary. (...)
+                      </p>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>The largest country in the world is</td>
+                    <td><audio controls controlslist="nodownload" src='audio/interleaving_base_175k/the_largest_country_in_the_world_is_cont_speech.wav'></audio></td>
+                </tr>
+
+                <tr>
+                    <td><audio controls controlslist="nodownload" src='audio/interleaving_base_175k/yellowstone_national_park_prompt_orin.wav'></audio></td>
+                    <td>
+                        <p>
+                            the northwest corner of Wyoming. It is located in the Greater Yellowstone area and is one of the most popular National Parks in the States. It is visited by over three million people each year. Yellowstone was established as the first national park in the United States on March 1st, 1872 the lake is sometimes referred to as the largest high-elevation lake in the world. It is the largest alkaline lake in the world and the second-largest freshwater lake in the United States after Lake Michigan.
+                        </p>
+                    </td>
+                </tr>
+
+                </tr>
+                  <tr>
+                    <td>Here's a story about a llama that can speak:</td>
+                    <td><audio controls controlslist="nodownload" src='audio/interleaving_base_175k/heres_a_story_about_a_llama_that_can_speak_cont_2_long.wav'></audio></td>
+                </tr>
+
+              </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container float-div">
+        <div class="text-center">
+        <h2>Generation samples from  <a id="small-caps">SpiRit-LM-Expressive</a> </h2>
+        </div>
+        <br>
+        <p>
+            We prompt the model with an expressive prompt in either
+        Text or Speech modality. For Speech prompt, we use the same
+        prompt content with different speaking styles to express the
+        emotion. The (cherry-picked) examples show that <a
+        id="small-caps">SpiRit-LM-Expressive</a> is able to transfer
+        the expressive style of the prompt onto the continuation
+        within or across a change in modality.
+            <br>
+        </p>
+        <div class="table-responsive pt-3">
+            <table style="text-align: center" class="table table-hover">
+              <thead>
+                <tr>
+                  <th style="text-align: center">Prompt</th>
+                  <th style="text-align: center">Continuation</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                <!-- T -> S -->
+                <!-- happy -->
+                <tr>
+                    <td>I am absolutely thrilled to be embarking on this new journey, it's going to be an incredible adventure and</td>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/T2S_happy.wav'></audio></td>
+                </tr>
+
+                <!-- angry -->
+                <tr>
+                    <td>This is unbelievable! My brand new car, ruined! How can someone be so careless and disrespectful?! Seriously?!</td>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/T2S_angry.wav' type='audio/mpeg'></audio></td>
+                </tr>
+                <!-- sad -->
+                <tr>
+                    <td rowspan="2" style="vertical-align: middle;">I can't believe she's gone. I don't know how to cope without her. The pain of losing her is overwhelming. I feel so lost without her</td>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/T2S_sad.wav' type='audio/mpeg'></audio></td>
+                </tr>
+                <tr>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/T2S_sad_second_speaker.wav' type='audio/mpeg'></audio></td>
+                </tr>
+                <!-- fear -->
+                <tr>
+                    <td>Did you hear that? What is that sound? I'm really scared. It's so dark, and that noise... it sounds so creepy.</td>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/T2S_fear.wav' type='audio/mpeg'></audio></td>
+                </tr>
+
+                <!-- S -> T -->
+                <!-- positive -->
+                <tr>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/S2T_pos_1.wav'></audio></td>
+                    <td>but I will say I did see this movie a time ago. It has nothing to do with it. Okay. Okay, but I will say that you know what? It's the second-best Tom Cruise. Movie I've seen</td>
+                </tr>
+                <!-- negative -->
+                <tr>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/S2T_neg_1.wav'></audio></td>
+                    <td>Yeah, it's a movie where they're running around in the rain and it's very noisy and you have to be able to hear over that. That's not a good strategy. That's why I'm</td>
+                </tr>
+
+                <!-- S -> S -->
+                <!-- positive -->
+                <tr>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/S2T_pos_1.wav'></audio></td>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/S2S_pos_1.wav'></audio></td>
+                </tr>
+                <!-- negative -->
+                <tr>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/S2T_neg_1.wav'></audio></td>
+                    <td><audio controls controlslist="nodownload" src='audio/expressive/S2S_neg_1.wav'></audio></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+    </div>
+
+</html>
