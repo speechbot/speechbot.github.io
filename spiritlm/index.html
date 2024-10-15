@@ -88,13 +88,13 @@
             that freely mixes text and speech. Our model is based on a 7B pretrained text language
             model that we extend to the speech modality by continuously training it on text and
             speech units. Speech and text sequences are concatenated as a single stream of tokens,
-            and trainedwith a word-level interleaving method using a small automatically-curated
+            and trained with a word-level interleaving method using a small automatically-curated
             speech-text parallel corpus. <a id="small-caps">Spirit LM</a> comes in two versions:
             a <a id="small-caps">Base</a> version that uses speech phonetic units (HuBERT) and an
             <a id="small-caps">Expressive</a> version that models expressivity using pitch and
             style units in addition to the phonetic units. For both versions, the text is encoded
             with subword BPE tokens. The resulting model displays both the semantic abilities of
-            text models and the expressiveabilities of speech models. Additionally, we demonstrate
+            text models and the expressive abilities of speech models. Additionally, we demonstrate
             that <a id="small-caps">Spirit LM</a> can learn new tasks in a few-shot fashion across
             modalities (i.e. ASR, TTS, Speech Classification).
         </p>
